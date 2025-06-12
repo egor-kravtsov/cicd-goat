@@ -166,9 +166,7 @@ def test_matching(path, headers, expected):
     request = Request(path, headers, None, "GET", None, app)
 
     try:
-        app.router.get(
-            request.path, request.method, request.headers.get("host")
-        )
+        app.router.get(request.path, request.method, request.headers.get("host"))
     except NotFound:
         response = 404
     except Exception:
@@ -642,8 +640,7 @@ def test_websocket_route_invalid_handler(app):
     with pytest.raises(ValueError) as e:
 
         @app.websocket("/")
-        async def handler():
-            ...
+        async def handler(): ...
 
     assert e.match(
         r"Required parameter `request` and/or `ws` missing in the "
@@ -689,9 +686,7 @@ def test_websocket_route_with_subprotocols(app, subprotocols, expected):
         results = ws.subprotocol
         assert ws.subprotocol is not None
 
-    _, response = SanicTestClient(app).websocket(
-        "/ws", subprotocols=subprotocols
-    )
+    _, response = SanicTestClient(app).websocket("/ws", subprotocols=subprotocols)
     assert response.opened is True
     assert results == expected
 

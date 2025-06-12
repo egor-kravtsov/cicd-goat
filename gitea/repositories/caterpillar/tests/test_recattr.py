@@ -73,5 +73,7 @@ def test_process_repr():
 
 def test_exception_repr():
     exception = recattrs.RecordException(ValueError, ValueError("Nope"), None)
-    regex = r"\(type=<class 'ValueError'>, value=ValueError\('Nope',?\), traceback=None\)"
+    regex = (
+        r"\(type=<class 'ValueError'>, value=ValueError\('Nope',?\), traceback=None\)"
+    )
     assert re.fullmatch(regex, repr(exception))

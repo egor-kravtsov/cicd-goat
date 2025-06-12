@@ -1,2 +1,2 @@
 def pytest_configure(config):
-    config.option.runpytest = 'subprocess'
+    config.option.runpytest = "subprocess"

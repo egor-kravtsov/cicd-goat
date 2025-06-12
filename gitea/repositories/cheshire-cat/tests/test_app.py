@@ -196,14 +196,8 @@ def test_app_websocket_parameters(websocket_protocol_mock, app):
     websocket_protocol_call_args = websocket_protocol_mock.call_args
     ws_kwargs = websocket_protocol_call_args[1]
     assert ws_kwargs["websocket_max_size"] == app.config.WEBSOCKET_MAX_SIZE
-    assert (
-        ws_kwargs["websocket_ping_timeout"]
-        == app.config.WEBSOCKET_PING_TIMEOUT
-    )
-    assert (
-        ws_kwargs["websocket_ping_interval"]
-        == app.config.WEBSOCKET_PING_INTERVAL
-    )
+    assert ws_kwargs["websocket_ping_timeout"] == app.config.WEBSOCKET_PING_TIMEOUT
+    assert ws_kwargs["websocket_ping_interval"] == app.config.WEBSOCKET_PING_INTERVAL
 
 
 def test_handle_request_with_nested_exception(app, monkeypatch):
@@ -214,9 +208,7 @@ def test_handle_request_with_nested_exception(app, monkeypatch):
     def mock_error_handler_response(*args, **kwargs):
         raise Exception(err_msg)
 
-    monkeypatch.setattr(
-        app.error_handler, "response", mock_error_handler_response
-    )
+    monkeypatch.setattr(app.error_handler, "response", mock_error_handler_response)
 
     @app.get("/")
     def handler(request):
@@ -235,9 +227,7 @@ def test_handle_request_with_nested_exception_debug(app, monkeypatch):
     def mock_error_handler_response(*args, **kwargs):
         raise Exception(err_msg)
 
-    monkeypatch.setattr(
-        app.error_handler, "response", mock_error_handler_response
-    )
+    monkeypatch.setattr(app.error_handler, "response", mock_error_handler_response)
 
     @app.get("/")
     def handler(request):
@@ -256,9 +246,7 @@ def test_handle_request_with_nested_sanic_exception(app, monkeypatch, caplog):
     def mock_error_handler_response(*args, **kwargs):
         raise SanicException("Mock SanicException")
 
-    monkeypatch.setattr(
-        app.error_handler, "response", mock_error_handler_response
-    )
+    monkeypatch.setattr(app.error_handler, "response", mock_error_handler_response)
 
     @app.get("/")
     def handler(request):
@@ -309,9 +297,7 @@ def test_app_registry_wrong_type():
 def test_app_registry_name_reuse():
     Sanic("test")
     Sanic.test_mode = False
-    with pytest.raises(
-        SanicException, match='Sanic app name "test" already in use.'
-    ):
+    with pytest.raises(SanicException, match='Sanic app name "test" already in use.'):
         Sanic("test")
     Sanic.test_mode = True
     Sanic("test")
@@ -336,9 +322,7 @@ def test_get_app_does_not_exist():
 
 
 def test_get_app_does_not_exist_force_create():
-    assert isinstance(
-        Sanic.get_app("does-not-exist", force_create=True), Sanic
-    )
+    assert isinstance(Sanic.get_app("does-not-exist", force_create=True), Sanic)
 
 
 def test_get_app_default():
@@ -347,9 +331,7 @@ def test_get_app_default():
 
 
 def test_get_app_no_default():
-    with pytest.raises(
-        SanicException, match="No Sanic apps have been registered."
-    ):
+    with pytest.raises(SanicException, match="No Sanic apps have been registered."):
         Sanic.get_app()
 
 
@@ -358,27 +340,21 @@ def test_get_app_default_ambiguous():
     Sanic("test2")
     with pytest.raises(
         SanicException,
-        match=re.escape(
-            'Multiple Sanic apps found, use Sanic.get_app("app_name")'
-        ),
+        match=re.escape('Multiple Sanic apps found, use Sanic.get_app("app_name")'),
     ):
         Sanic.get_app()
 
 
 def test_app_no_registry():
     Sanic("no-register", register=False)
-    with pytest.raises(
-        SanicException, match='Sanic app name "no-register" not found.'
-    ):
+    with pytest.raises(SanicException, match='Sanic app name "no-register" not found.'):
         Sanic.get_app("no-register")
 
 
 def test_app_no_registry_env():
     environ["SANIC_REGISTER"] = "False"
     Sanic("no-register")
-    with pytest.raises(
-        SanicException, match='Sanic app name "no-register" not found.'
-    ):
+    with pytest.raises(SanicException, match='Sanic app name "no-register" not found.'):
         Sanic.get_app("no-register")
     del environ["SANIC_REGISTER"]
 
@@ -429,8 +405,7 @@ def test_bad_custom_config():
 
 
 def test_custom_config():
-    class CustomConfig(Config):
-        ...
+    class CustomConfig(Config): ...
 
     config = CustomConfig()
     app = Sanic("custom", config=config)
@@ -439,8 +414,7 @@ def test_custom_config():
 
 
 def test_custom_context():
-    class CustomContext:
-        ...
+    class CustomContext: ...
 
     ctx = CustomContext()
     app = Sanic("custom", ctx=ctx)

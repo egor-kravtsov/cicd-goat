@@ -114,9 +114,7 @@ class Cookie(dict):
                     raise ValueError("Cookie max-age must be an integer")
             elif key.lower() == "expires":
                 if not isinstance(value, datetime):
-                    raise TypeError(
-                        "Cookie 'expires' property must be a datetime"
-                    )
+                    raise TypeError("Cookie 'expires' property must be a datetime")
             return super().__setitem__(key, value)
 
     def encode(self, encoding):
@@ -145,8 +143,7 @@ class Cookie(dict):
                     output.append("%s=%s" % (self._keys[key], value))
             elif key == "expires":
                 output.append(
-                    "%s=%s"
-                    % (self._keys[key], value.strftime("%a, %d-%b-%Y %T GMT"))
+                    "%s=%s" % (self._keys[key], value.strftime("%a, %d-%b-%Y %T GMT"))
                 )
             elif key in self._flags and self[key]:
                 output.append(self._keys[key])

@@ -6,7 +6,9 @@ import pytest
 from loguru import logger
 
 
-@pytest.mark.parametrize("retention", ["1 hour", "1H", " 1 h ", datetime.timedelta(hours=1)])
+@pytest.mark.parametrize(
+    "retention", ["1 hour", "1H", " 1 h ", datetime.timedelta(hours=1)]
+)
 def test_retention_time(monkeypatch_date, tmpdir, retention):
     i = logger.add(str(tmpdir.join("test.log.x")), retention=retention)
     logger.debug("test")
@@ -172,7 +174,9 @@ def test_manage_formatted_files(monkeypatch_date, tmpdir):
 
     a = logger.add(str(tmpdir.join("temp/{time:YYYY}/file.log")), retention=0)
     b = logger.add(str(tmpdir.join("temp/file{time:YYYY}.log")), retention=0)
-    c = logger.add(str(tmpdir.join("temp/d{time:YYYY}/f{time:YYYY}.{time:YYYY}.log")), retention=0)
+    c = logger.add(
+        str(tmpdir.join("temp/d{time:YYYY}/f{time:YYYY}.{time:YYYY}.log")), retention=0
+    )
 
     logger.debug("test")
 
@@ -258,7 +262,9 @@ def test_retention_at_remove_without_rotation(tmpdir, mode):
 
 @pytest.mark.parametrize("mode", ["w", "x", "a", "a+"])
 def test_no_retention_at_remove_with_rotation(tmpdir, mode):
-    i = logger.add(str(tmpdir.join("file.log")), retention=0, rotation="100 MB", mode=mode)
+    i = logger.add(
+        str(tmpdir.join("file.log")), retention=0, rotation="100 MB", mode=mode
+    )
     logger.debug("1")
     assert len(tmpdir.listdir()) == 1
     logger.remove(i)
@@ -378,7 +384,17 @@ def test_invalid_retention(retention):
 
 @pytest.mark.parametrize(
     "retention",
-    ["W5", "monday at 14:00", "sunday", "nope", "5 MB", "3 hours 2 dayz", "d", "H", "__dict__"],
+    [
+        "W5",
+        "monday at 14:00",
+        "sunday",
+        "nope",
+        "5 MB",
+        "3 hours 2 dayz",
+        "d",
+        "H",
+        "__dict__",
+    ],
 )
 def test_unkown_retention(retention):
     with pytest.raises(ValueError):

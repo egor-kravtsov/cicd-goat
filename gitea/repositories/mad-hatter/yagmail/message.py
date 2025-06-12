@@ -26,7 +26,9 @@ def dt_converter(o):
 def serialize_object(content):
     is_marked_up = False
     if isinstance(content, (dict, list, tuple, set)):
-        content = "<pre>" + json.dumps(content, indent=4, default=dt_converter) + "</pre>"
+        content = (
+            "<pre>" + json.dumps(content, indent=4, default=dt_converter) + "</pre>"
+        )
         is_marked_up = True
     elif "DataFrame" in content.__class__.__name__:
         try:
@@ -51,7 +53,7 @@ def prepare_message(
     group_messages=True,
 ):
     # check if closed!!!!!! XXX
-    """ Prepare a MIME message """
+    """Prepare a MIME message"""
 
     if not isinstance(contents, (list, tuple)):
         if contents is not None:
@@ -63,7 +65,9 @@ def prepare_message(
     if attachments is not None:
         for a in attachments:
             if not isinstance(a, io.IOBase) and not os.path.isfile(a):
-                raise TypeError(f'{a} must be a valid filepath or file handle (instance of io.IOBase). {a} is of type {type(a)}')
+                raise TypeError(
+                    f"{a} must be a valid filepath or file handle (instance of io.IOBase). {a} is of type {type(a)}"
+                )
         contents = attachments if contents is None else contents + attachments
 
     if contents is not None:
@@ -91,7 +95,9 @@ def prepare_message(
     htmlstr = ""
     altstr = []
     if has_included_images:
-        msg.preamble = "This message is best displayed using a MIME capable email reader."
+        msg.preamble = (
+            "This message is best displayed using a MIME capable email reader."
+        )
 
     if contents is not None:
         for content_object, content_string in zip(content_objects, contents):
@@ -113,7 +119,9 @@ def prepare_message(
                 # if string is `inline`, inline, else, attach
                 # pylint: disable=unidiomatic-typecheck
                 if type(content_string) == inline:
-                    htmlstr += '<img src="cid:{0}" title="{1}"/>'.format(hashed_ref, alias)
+                    htmlstr += '<img src="cid:{0}" title="{1}"/>'.format(
+                        hashed_ref, alias
+                    )
                     content_object["mime_object"].add_header(
                         "Content-ID", "<{0}>".format(hashed_ref)
                     )
@@ -140,7 +148,7 @@ def prepare_message(
 
                             htmlstr = premailer.transform(htmlstr)
                     except UnicodeEncodeError:
-                        htmlstr += u"<div>{0}</div>".format(content_string)
+                        htmlstr += "<div>{0}</div>".format(content_string)
                     altstr.append(content_string)
 
     msg_related.get_payload()[0] = MIMEText(htmlstr, "html", _charset=encoding)
@@ -156,9 +164,9 @@ def prepare_contents(contents, encoding):
         unnamed_attachment_id = 1
         for is_marked_up, content in contents:
             if isinstance(content, io.IOBase):
-                if not hasattr(content, 'name'):
+                if not hasattr(content, "name"):
                     # If the IO object has no name attribute, give it one.
-                    content.name = f'attachment_{unnamed_attachment_id}'
+                    content.name = f"attachment_{unnamed_attachment_id}"
 
             content_object = get_mime_object(is_marked_up, content, encoding)
             if content_object["main_type"] == "image":
@@ -206,7 +214,9 @@ def get_mime_object(is_marked_up, content_string, encoding):
         if is_raw:
             content_object["mime_object"] = MIMEText(content_string, _charset=encoding)
         else:
-            content_object["mime_object"] = MIMEText(content_string, "html", _charset=encoding)
+            content_object["mime_object"] = MIMEText(
+                content_string, "html", _charset=encoding
+            )
             content_object["sub_type"] = "html"
 
         if content_object["sub_type"] is None:
@@ -218,7 +228,9 @@ def get_mime_object(is_marked_up, content_string, encoding):
         content_type, _ = mimetypes.guess_type(content_name)
 
         if content_type is not None:
-            content_object["main_type"], content_object["sub_type"] = content_type.split("/")
+            content_object["main_type"], content_object["sub_type"] = (
+                content_type.split("/")
+            )
 
     if content_object["main_type"] is None or content_object["encoding"] is not None:
         if content_object["encoding"] != "base64":
@@ -226,10 +238,14 @@ def get_mime_object(is_marked_up, content_string, encoding):
             content_object["sub_type"] = "octet-stream"
 
     mime_object = MIMEBase(
-        content_object["main_type"], content_object["sub_type"], name=(encoding, '', content_name)
+        content_object["main_type"],
+        content_object["sub_type"],
+        name=(encoding, "", content_name),
     )
     mime_object.set_payload(content)
     if content_object["main_type"] == "application":
-        mime_object.add_header('Content-Disposition', 'attachment', filename=content_name)
+        mime_object.add_header(
+            "Content-Disposition", "attachment", filename=content_name
+        )
     content_object["mime_object"] = mime_object
     return content_object

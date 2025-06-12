@@ -116,14 +116,10 @@ def test_response_content_length(app):
         )
 
     _, response = app.test_client.get("/response_with_space")
-    content_length_for_response_with_space = response.headers.get(
-        "Content-Length"
-    )
+    content_length_for_response_with_space = response.headers.get("Content-Length")
 
     _, response = app.test_client.get("/response_without_space")
-    content_length_for_response_without_space = response.headers.get(
-        "Content-Length"
-    )
+    content_length_for_response_without_space = response.headers.get("Content-Length")
 
     assert (
         content_length_for_response_with_space
@@ -310,9 +306,7 @@ def get_file_content(static_file_directory, file_name):
         return file.read()
 
 
-@pytest.mark.parametrize(
-    "file_name", ["test.file", "decode me.txt", "python.png"]
-)
+@pytest.mark.parametrize("file_name", ["test.file", "decode me.txt", "python.png"])
 @pytest.mark.parametrize("status", [200, 401])
 def test_file_response(app, file_name, static_file_directory, status):
     @app.route("/files/<filename>", methods=["GET"])
@@ -339,9 +333,7 @@ def test_file_response(app, file_name, static_file_directory, status):
         ("python.png", "logo.png"),
     ],
 )
-def test_file_response_custom_filename(
-    app, source, dest, static_file_directory
-):
+def test_file_response_custom_filename(app, source, dest, static_file_directory):
     @app.route("/files/<filename>", methods=["GET"])
     def file_route(request, filename):
         file_path = os.path.join(static_file_directory, filename)
@@ -351,10 +343,7 @@ def test_file_response_custom_filename(
     request, response = app.test_client.get(f"/files/{source}")
     assert response.status == 200
     assert response.body == get_file_content(static_file_directory, source)
-    assert (
-        response.headers["Content-Disposition"]
-        == f'attachment; filename="{dest}"'
-    )
+    assert response.headers["Content-Disposition"] == f'attachment; filename="{dest}"'
 
 
 @pytest.mark.parametrize("file_name", ["test.file", "decode me.txt"])
@@ -388,9 +377,7 @@ def test_file_head_response(app, file_name, static_file_directory):
     )
 
 
-@pytest.mark.parametrize(
-    "file_name", ["test.file", "decode me.txt", "python.png"]
-)
+@pytest.mark.parametrize("file_name", ["test.file", "decode me.txt", "python.png"])
 def test_file_stream_response(app, file_name, static_file_directory):
     @app.route("/files/<filename>", methods=["GET"])
     def file_route(request, filename):
@@ -416,9 +403,7 @@ def test_file_stream_response(app, file_name, static_file_directory):
         ("python.png", "logo.png"),
     ],
 )
-def test_file_stream_response_custom_filename(
-    app, source, dest, static_file_directory
-):
+def test_file_stream_response_custom_filename(app, source, dest, static_file_directory):
     @app.route("/files/<filename>", methods=["GET"])
     def file_route(request, filename):
         file_path = os.path.join(static_file_directory, filename)
@@ -428,10 +413,7 @@ def test_file_stream_response_custom_filename(
     request, response = app.test_client.get(f"/files/{source}")
     assert response.status == 200
     assert response.body == get_file_content(static_file_directory, source)
-    assert (
-        response.headers["Content-Disposition"]
-        == f'attachment; filename="{dest}"'
-    )
+    assert response.headers["Content-Disposition"] == f'attachment; filename="{dest}"'
 
 
 @pytest.mark.parametrize("file_name", ["test.file", "decode me.txt"])
@@ -472,12 +454,8 @@ def test_file_stream_head_response(app, file_name, static_file_directory):
     )
 
 
-@pytest.mark.parametrize(
-    "file_name", ["test.file", "decode me.txt", "python.png"]
-)
-@pytest.mark.parametrize(
-    "size,start,end", [(1024, 0, 1024), (4096, 1024, 8192)]
-)
+@pytest.mark.parametrize("file_name", ["test.file", "decode me.txt", "python.png"])
+@pytest.mark.parametrize("size,start,end", [(1024, 0, 1024), (4096, 1024, 8192)])
 def test_file_stream_response_range(
     app, file_name, static_file_directory, size, start, end
 ):

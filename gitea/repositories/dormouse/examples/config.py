@@ -1,10 +1,9 @@
-
 import os
 import secrets
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or secrets.token_hex(16)
+    SECRET_KEY = os.environ.get("SECRET_KEY") or secrets.token_hex(16)
 
 
 class DevelopmentConfig(Config):
@@ -20,7 +19,7 @@ class TestingConfig(Config):
 
 
 config = {
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'production': ProductionConfig,
+    "development": DevelopmentConfig,
+    "testing": TestingConfig,
+    "production": ProductionConfig,
 }

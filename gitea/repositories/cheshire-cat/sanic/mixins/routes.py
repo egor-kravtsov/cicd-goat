@@ -29,9 +29,7 @@ from sanic.response import HTTPResponse, file, file_stream
 from sanic.views import CompositionView
 
 
-RouteWrapper = Callable[
-    [RouteHandler], Union[RouteHandler, Tuple[Route, RouteHandler]]
-]
+RouteWrapper = Callable[[RouteHandler], Union[RouteHandler, Tuple[Route, RouteHandler]]]
 
 
 class RouteMixin:
@@ -727,9 +725,7 @@ class RouteMixin:
         # from herping a derp and treating the uri as an absolute path
         root_path = file_path = file_or_directory
         if __file_uri__:
-            file_path = path.join(
-                file_or_directory, sub("^[/]*", "", __file_uri__)
-            )
+            file_path = path.join(file_or_directory, sub("^[/]*", "", __file_uri__))
 
         # URL decode the path sent by the browser otherwise we won't be able to
         # match filenames which got encoded (filenames with spaces etc)
@@ -754,10 +750,7 @@ class RouteMixin:
                 modified_since = strftime(
                     "%a, %d %b %Y %H:%M:%S GMT", gmtime(stats.st_mtime)
                 )
-                if (
-                    request.headers.getone("if-modified-since", None)
-                    == modified_since
-                ):
+                if request.headers.getone("if-modified-since", None) == modified_since:
                     return HTTPResponse(status=304)
                 headers["Last-Modified"] = modified_since
             _range = None
@@ -880,17 +873,12 @@ class RouteMixin:
                     f"'{file_or_directory}'"
                 )
             uri += "/<__file_uri__:path>"
-        elif static.resource_type == "file" and not path.isfile(
-            file_or_directory
-        ):
+        elif static.resource_type == "file" and not path.isfile(file_or_directory):
             raise TypeError(
-                "Resource type improperly identified as file. "
-                f"'{file_or_directory}'"
+                "Resource type improperly identified as file. " f"'{file_or_directory}'"
             )
         elif static.resource_type != "file":
-            raise ValueError(
-                "The resource_type should be set to 'file' or 'dir'"
-            )
+            raise ValueError("The resource_type should be set to 'file' or 'dir'")
 
         # special prefix for static files
         # if not static.name.startswith("_static_"):

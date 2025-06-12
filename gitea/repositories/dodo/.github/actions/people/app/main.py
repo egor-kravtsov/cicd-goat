@@ -501,9 +501,16 @@ if __name__ == "__main__":
     github_sponsors_path = Path("./docs/en/data/github_sponsors.yml")
     people_old_content = people_path.read_text(encoding="utf-8")
     github_sponsors_old_content = github_sponsors_path.read_text(encoding="utf-8")
-    new_people_content = yaml.dump(people, sort_keys=False, width=200, allow_unicode=True)
-    new_github_sponsors_content = yaml.dump(github_sponsors, sort_keys=False, width=200, allow_unicode=True)
-    if people_old_content == new_people_content and github_sponsors_old_content == new_github_sponsors_content:
+    new_people_content = yaml.dump(
+        people, sort_keys=False, width=200, allow_unicode=True
+    )
+    new_github_sponsors_content = yaml.dump(
+        github_sponsors, sort_keys=False, width=200, allow_unicode=True
+    )
+    if (
+        people_old_content == new_people_content
+        and github_sponsors_old_content == new_github_sponsors_content
+    ):
         logging.info("The FastAPI People data hasn't changed, finishing.")
         sys.exit(0)
     people_path.write_text(new_people_content, encoding="utf-8")

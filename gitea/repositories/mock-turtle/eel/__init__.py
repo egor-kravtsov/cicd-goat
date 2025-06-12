@@ -17,9 +17,9 @@ import pkg_resources as pkg
 import socket
 import mimetypes
 
-mimetypes.add_type('application/javascript', '.js')
-_eel_js_file = pkg.resource_filename('eel', 'eel.js')
-_eel_js = open(_eel_js_file, encoding='utf-8').read()
+mimetypes.add_type("application/javascript", ".js")
+_eel_js_file = pkg.resource_filename("eel", "eel.js")
+_eel_js = open(_eel_js_file, encoding="utf-8").read()
 _websockets = []
 _call_return_values = {}
 _call_return_callbacks = {}
@@ -36,48 +36,52 @@ _js_result_timeout = 10000
 
 # All start() options must provide a default value and explanation here
 _start_args = {
-    'mode':             'chrome',                   # What browser is used
-    'host':             'localhost',                # Hostname use for Bottle server
-    'port':             8000,                       # Port used for Bottle server (use 0 for auto)
-    'block':            True,                       # Whether start() blocks calling thread
-    'jinja_templates':  None,                       # Folder for jinja2 templates
-    'cmdline_args':     ['--disable-http-cache'],   # Extra cmdline flags to pass to browser start
-    'size':             None,                       # (width, height) of main window
-    'position':         None,                       # (left, top) of main window
-    'geometry':         {},                         # Dictionary of size/position for all windows
-    'close_callback':   None,                       # Callback for when all windows have closed
-    'app_mode':  True,                              # (Chrome specific option)
-    'all_interfaces': False,                        # Allow bottle server to listen for connections on all interfaces
-    'disable_cache': True,                          # Sets the no-store response header when serving assets
-    'default_path': 'index.html',                   # The default file to retrieve for the root URL
-    'app': btl.default_app(),                       # Allows passing in a custom Bottle instance, e.g. with middleware
-    'shutdown_delay': 1.0                          # how long to wait after a websocket closes before detecting complete shutdown
+    "mode": "chrome",  # What browser is used
+    "host": "localhost",  # Hostname use for Bottle server
+    "port": 8000,  # Port used for Bottle server (use 0 for auto)
+    "block": True,  # Whether start() blocks calling thread
+    "jinja_templates": None,  # Folder for jinja2 templates
+    "cmdline_args": [
+        "--disable-http-cache"
+    ],  # Extra cmdline flags to pass to browser start
+    "size": None,  # (width, height) of main window
+    "position": None,  # (left, top) of main window
+    "geometry": {},  # Dictionary of size/position for all windows
+    "close_callback": None,  # Callback for when all windows have closed
+    "app_mode": True,  # (Chrome specific option)
+    "all_interfaces": False,  # Allow bottle server to listen for connections on all interfaces
+    "disable_cache": True,  # Sets the no-store response header when serving assets
+    "default_path": "index.html",  # The default file to retrieve for the root URL
+    "app": btl.default_app(),  # Allows passing in a custom Bottle instance, e.g. with middleware
+    "shutdown_delay": 1.0,  # how long to wait after a websocket closes before detecting complete shutdown
 }
 
 # == Temporary (suppressable) error message to inform users of breaking API change for v1.0.0 ===
-_start_args['suppress_error'] = False
-api_error_message = '''
+_start_args["suppress_error"] = False
+api_error_message = """
 ----------------------------------------------------------------------------------
   'options' argument deprecated in v1.0.0, see https://github.com/ChrisKnott/Eel
   To suppress this error, add 'suppress_error=True' to start() call.
   This option will be removed in future versions
 ----------------------------------------------------------------------------------
-'''
+"""
 # ===============================================================================================
 
 # Public functions
+
 
 def expose(name_or_function=None):
     # Deal with '@eel.expose()' - treat as '@eel.expose'
     if name_or_function is None:
         return expose
 
-    if type(name_or_function) == str:   # Called as '@eel.expose("my_name")'
+    if type(name_or_function) == str:  # Called as '@eel.expose("my_name")'
         name = name_or_function
 
         def decorator(function):
             _expose(name, function)
             return function
+
         return decorator
     else:
         function = name_or_function
@@ -89,20 +93,24 @@ def expose(name_or_function=None):
 # Examples: `eel.expose(w, "func_name")`, `eel.expose(func_name)`, `eel.expose((function (e){}), "func_name")`
 EXPOSED_JS_FUNCTIONS = pp.ZeroOrMore(
     pp.Suppress(
-        pp.SkipTo(pp.Literal('eel.expose('))
-        + pp.Literal('eel.expose(')
+        pp.SkipTo(pp.Literal("eel.expose("))
+        + pp.Literal("eel.expose(")
         + pp.Optional(
-            pp.Or([pp.nestedExpr(), pp.Word(pp.printables, excludeChars=',')]) + pp.Literal(',')
+            pp.Or([pp.nestedExpr(), pp.Word(pp.printables, excludeChars=",")])
+            + pp.Literal(",")
         )
     )
     + pp.Suppress(pp.Regex(r'["\']?'))
-    + pp.Word(pp.printables, excludeChars='"\')')
+    + pp.Word(pp.printables, excludeChars="\"')")
     + pp.Suppress(pp.Regex(r'["\']?\s*\)')),
 )
 
 
-def init(path, allowed_extensions=['.js', '.html', '.txt', '.htm',
-                                   '.xhtml', '.vue'], js_result_timeout=10000):
+def init(
+    path,
+    allowed_extensions=[".js", ".html", ".txt", ".htm", ".xhtml", ".vue"],
+    js_result_timeout=10000,
+):
     global root_path, _js_functions, _js_result_timeout
     root_path = _get_real_path(path)
 
@@ -113,18 +121,18 @@ def init(path, allowed_extensions=['.js', '.html', '.txt', '.htm',
                 continue
 
             try:
-                with open(os.path.join(root, name), encoding='utf-8') as file:
+                with open(os.path.join(root, name), encoding="utf-8") as file:
                     contents = file.read()
                     expose_calls = set()
                     matches = EXPOSED_JS_FUNCTIONS.parseString(contents).asList()
                     for expose_call in matches:
                         # Verify that function name is valid
                         msg = "eel.expose() call contains '(' or '='"
-                        assert rgx.findall(r'[\(=]', expose_call) == [], msg
+                        assert rgx.findall(r"[\(=]", expose_call) == [], msg
                         expose_calls.add(expose_call)
                     js_functions.update(expose_calls)
             except UnicodeDecodeError:
-                pass    # Malformed file probably
+                pass  # Malformed file probably
 
     _js_functions = list(js_functions)
     for js_function in _js_functions:
@@ -136,52 +144,58 @@ def init(path, allowed_extensions=['.js', '.html', '.txt', '.htm',
 def start(*start_urls, **kwargs):
     _start_args.update(kwargs)
 
-    if 'options' in kwargs:
-        if _start_args['suppress_error']:
-            _start_args.update(kwargs['options'])
+    if "options" in kwargs:
+        if _start_args["suppress_error"]:
+            _start_args.update(kwargs["options"])
         else:
             raise RuntimeError(api_error_message)
 
-    if _start_args['port'] == 0:
+    if _start_args["port"] == 0:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.bind(('localhost', 0))
-        _start_args['port'] = sock.getsockname()[1]
+        sock.bind(("localhost", 0))
+        _start_args["port"] = sock.getsockname()[1]
         sock.close()
 
-    if _start_args['jinja_templates'] != None:
+    if _start_args["jinja_templates"] != None:
         from jinja2 import Environment, FileSystemLoader, select_autoescape
-        templates_path = os.path.join(root_path, _start_args['jinja_templates'])
-        _start_args['jinja_env'] = Environment(loader=FileSystemLoader(templates_path),
-                                 autoescape=select_autoescape(['html', 'xml']))
+
+        templates_path = os.path.join(root_path, _start_args["jinja_templates"])
+        _start_args["jinja_env"] = Environment(
+            loader=FileSystemLoader(templates_path),
+            autoescape=select_autoescape(["html", "xml"]),
+        )
 
     # verify shutdown_delay is correct value
-    if not isinstance(_start_args['shutdown_delay'], (int, float)):
-        raise ValueError("`shutdown_delay` must be a number, "\
-            "got a {}".format(type(_start_args['shutdown_delay'])))
+    if not isinstance(_start_args["shutdown_delay"], (int, float)):
+        raise ValueError(
+            "`shutdown_delay` must be a number, "
+            "got a {}".format(type(_start_args["shutdown_delay"]))
+        )
 
     # Launch the browser to the starting URLs
     show(*start_urls)
 
     def run_lambda():
-        if _start_args['all_interfaces'] == True:
-            HOST = '0.0.0.0'
+        if _start_args["all_interfaces"] == True:
+            HOST = "0.0.0.0"
         else:
-            HOST = _start_args['host']
+            HOST = _start_args["host"]
 
-        app = _start_args['app']  # type: btl.Bottle
+        app = _start_args["app"]  # type: btl.Bottle
         for route_path, route_params in BOTTLE_ROUTES.items():
             route_func, route_kwargs = route_params
             btl.route(path=route_path, callback=route_func, **route_kwargs)
 
         return btl.run(
             host=HOST,
-            port=_start_args['port'],
+            port=_start_args["port"],
             server=wbs.GeventWebSocketServer,
             quiet=True,
-            app=app)
+            app=app,
+        )
 
     # Start the webserver
-    if _start_args['block']:
+    if _start_args["block"]:
         run_lambda()
     else:
         spawn(run_lambda)
@@ -198,31 +212,38 @@ def sleep(seconds):
 def spawn(function, *args, **kwargs):
     return gvt.spawn(function, *args, **kwargs)
 
+
 # Bottle Routes
 
-def _eel():
-    start_geometry = {'default': {'size': _start_args['size'],
-                                  'position': _start_args['position']},
-                      'pages':   _start_args['geometry']}
 
-    page = _eel_js.replace('/** _py_functions **/',
-                           '_py_functions: %s,' % list(_exposed_functions.keys()))
-    page = page.replace('/** _start_geometry **/',
-                        '_start_geometry: %s,' % _safe_json(start_geometry))
-    btl.response.content_type = 'application/javascript'
+def _eel():
+    start_geometry = {
+        "default": {"size": _start_args["size"], "position": _start_args["position"]},
+        "pages": _start_args["geometry"],
+    }
+
+    page = _eel_js.replace(
+        "/** _py_functions **/", "_py_functions: %s," % list(_exposed_functions.keys())
+    )
+    page = page.replace(
+        "/** _start_geometry **/", "_start_geometry: %s," % _safe_json(start_geometry)
+    )
+    btl.response.content_type = "application/javascript"
     _set_response_headers(btl.response)
     return page
 
+
 def _root():
-    return _static(_start_args['default_path'])
+    return _static(_start_args["default_path"])
+
 
 def _static(path):
     response = None
-    if 'jinja_env' in _start_args and 'jinja_templates' in _start_args:
-        template_prefix = _start_args['jinja_templates'] + '/'
+    if "jinja_env" in _start_args and "jinja_templates" in _start_args:
+        template_prefix = _start_args["jinja_templates"] + "/"
         if path.startswith(template_prefix):
             n = len(template_prefix)
-            template = _start_args['jinja_env'].get_template(path[n:])
+            template = _start_args["jinja_env"].get_template(path[n:])
             response = btl.HTTPResponse(template.render())
 
     if response is None:
@@ -230,6 +251,7 @@ def _static(path):
 
     _set_response_headers(response)
     return response
+
 
 def _websocket(ws):
     global _websockets
@@ -261,10 +283,11 @@ BOTTLE_ROUTES = {
     "/eel.js": (_eel, dict()),
     "/": (_root, dict()),
     "/<path:path>": (_static, dict()),
-    "/eel": (_websocket, dict(apply=[wbs.websocket]))
+    "/eel": (_websocket, dict(apply=[wbs.websocket])),
 }
 
 # Private functions
+
 
 def _safe_json(obj):
     return jsn.dumps(obj, default=lambda o: None)
@@ -280,39 +303,46 @@ def _repeated_send(ws, msg):
 
 
 def _process_message(message, ws):
-    if 'call' in message:
+    if "call" in message:
         error_info = {}
         try:
-            return_val = _exposed_functions[message['name']](*message['args'])
-            status = 'ok'
+            return_val = _exposed_functions[message["name"]](*message["args"])
+            status = "ok"
         except Exception as e:
             err_traceback = traceback.format_exc()
             traceback.print_exc()
             return_val = None
-            status = 'error'
-            error_info['errorText'] = repr(e)
-            error_info['errorTraceback'] = err_traceback
-        _repeated_send(ws, _safe_json({ 'return': message['call'],
-                                        'status': status,
-                                        'value': return_val,
-                                        'error': error_info,}))
-    elif 'return' in message:
-        call_id = message['return']
+            status = "error"
+            error_info["errorText"] = repr(e)
+            error_info["errorTraceback"] = err_traceback
+        _repeated_send(
+            ws,
+            _safe_json(
+                {
+                    "return": message["call"],
+                    "status": status,
+                    "value": return_val,
+                    "error": error_info,
+                }
+            ),
+        )
+    elif "return" in message:
+        call_id = message["return"]
         if call_id in _call_return_callbacks:
             callback, error_callback = _call_return_callbacks.pop(call_id)
-            if message['status'] == 'ok':
-                callback(message['value'])
-            elif message['status'] == 'error' and error_callback is not None:
-                error_callback(message['error'], message['stack'])
+            if message["status"] == "ok":
+                callback(message["value"])
+            elif message["status"] == "error" and error_callback is not None:
+                error_callback(message["error"], message["stack"])
         else:
-            _call_return_values[call_id] = message['value']
+            _call_return_values[call_id] = message["value"]
 
     else:
-        print('Invalid message received: ', message)
+        print("Invalid message received: ", message)
 
 
 def _get_real_path(path):
-    if getattr(sys, 'frozen', False):
+    if getattr(sys, "frozen", False):
         return os.path.join(sys._MEIPASS, path)
     else:
         return os.path.abspath(path)
@@ -330,7 +360,7 @@ def _call_object(name, args):
     global _call_number
     _call_number += 1
     call_id = _call_number + rnd.random()
-    return {'call': call_id, 'name': name, 'args': args}
+    return {"call": call_id, "name": name, "args": args}
 
 
 def _mock_call(name, args):
@@ -349,7 +379,7 @@ def _js_call(name, args):
 
 def _call_return(call):
     global _js_result_timeout
-    call_id = call['call']
+    call_id = call["call"]
 
     def return_func(callback=None, error_callback=None):
         if callback is not None:
@@ -359,6 +389,7 @@ def _call_return(call):
                 if call_id in _call_return_values:
                     return _call_return_values.pop(call_id)
                 sleep(0.001)
+
     return return_func
 
 
@@ -376,7 +407,7 @@ def _detect_shutdown():
 def _websocket_close(page):
     global _shutdown
 
-    close_callback = _start_args.get('close_callback')
+    close_callback = _start_args.get("close_callback")
 
     if close_callback is not None:
         sockets = [p for _, p in _websockets]
@@ -385,10 +416,10 @@ def _websocket_close(page):
         if _shutdown:
             _shutdown.kill()
 
-        _shutdown = gvt.spawn_later(_start_args['shutdown_delay'], _detect_shutdown)
+        _shutdown = gvt.spawn_later(_start_args["shutdown_delay"], _detect_shutdown)
 
 
 def _set_response_headers(response):
-    if _start_args['disable_cache']:
+    if _start_args["disable_cache"]:
         # https://stackoverflow.com/a/24748094/280852
-        response.set_header('Cache-Control', 'no-store')
+        response.set_header("Cache-Control", "no-store")

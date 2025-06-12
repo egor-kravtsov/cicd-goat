@@ -173,7 +173,12 @@ def test_pickling_file_handler(tmpdir):
 )
 def test_pickling_file_handler_rotation(tmpdir, rotation):
     file = tmpdir.join("test.log")
-    logger.add(str(file), format="{level} - {function} - {message}", delay=True, rotation=rotation)
+    logger.add(
+        str(file),
+        format="{level} - {function} - {message}",
+        delay=True,
+        rotation=rotation,
+    )
     pickled = pickle.dumps(logger)
     unpickled = pickle.loads(pickled)
     unpickled.debug("A message")
@@ -186,7 +191,10 @@ def test_pickling_file_handler_rotation(tmpdir, rotation):
 def test_pickling_file_handler_retention(tmpdir, retention):
     file = tmpdir.join("test.log")
     logger.add(
-        str(file), format="{level} - {function} - {message}", delay=True, retention=retention
+        str(file),
+        format="{level} - {function} - {message}",
+        delay=True,
+        retention=retention,
     )
     pickled = pickle.dumps(logger)
     unpickled = pickle.loads(pickled)
@@ -198,7 +206,10 @@ def test_pickling_file_handler_retention(tmpdir, retention):
 def test_pickling_file_handler_compression(tmpdir, compression):
     file = tmpdir.join("test.log")
     logger.add(
-        str(file), format="{level} - {function} - {message}", delay=True, compression=compression
+        str(file),
+        format="{level} - {function} - {message}",
+        delay=True,
+        compression=compression,
     )
     pickled = pickle.dumps(logger)
     unpickled = pickle.loads(pickled)
@@ -216,7 +227,9 @@ def test_pickling_no_handler(writer):
 
 def test_pickling_handler_not_serializable():
     logger.add(lambda m: None)
-    with pytest.raises((pickle.PicklingError, AttributeError), match="Can't (pickle|get local)"):
+    with pytest.raises(
+        (pickle.PicklingError, AttributeError), match="Can't (pickle|get local)"
+    ):
         pickle.dumps(logger)
 
 
@@ -266,13 +279,17 @@ def test_pickling_format_function(capsys, colorize):
 
 def test_pickling_filter_function_not_serializable():
     logger.add(print, filter=lambda r: True)
-    with pytest.raises((pickle.PicklingError, AttributeError), match="Can't (pickle|get local)"):
+    with pytest.raises(
+        (pickle.PicklingError, AttributeError), match="Can't (pickle|get local)"
+    ):
         pickle.dumps(logger)
 
 
 def test_pickling_format_function_not_serializable():
     logger.add(print, format=lambda r: "{message}")
-    with pytest.raises((pickle.PicklingError, AttributeError), match="Can't (pickle|get local)"):
+    with pytest.raises(
+        (pickle.PicklingError, AttributeError), match="Can't (pickle|get local)"
+    ):
         pickle.dumps(logger)
 
 

@@ -48,10 +48,7 @@ def get_logo(full=False, coffee=False):
         else BASE_LOGO
     )
 
-    if (
-        sys.platform == "darwin"
-        and environ.get("TERM_PROGRAM") == "Apple_Terminal"
-    ):
+    if sys.platform == "darwin" and environ.get("TERM_PROGRAM") == "Apple_Terminal":
         logo = ansi_pattern.sub("", logo)
 
     return logo

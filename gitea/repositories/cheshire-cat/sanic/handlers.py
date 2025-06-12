@@ -26,9 +26,7 @@ class ErrorHandler:
     """
 
     # Beginning in v22.3, the base renderer will be TextRenderer
-    def __init__(
-        self, fallback: str = "auto", base: Type[BaseRenderer] = HTMLRenderer
-    ):
+    def __init__(self, fallback: str = "auto", base: Type[BaseRenderer] = HTMLRenderer):
         self.handlers: List[Tuple[Type[BaseException], RouteHandler]] = []
         self.cached_handlers: Dict[
             Tuple[Type[BaseException], Optional[str]], Optional[RouteHandler]
@@ -39,11 +37,7 @@ class ErrorHandler:
 
     @classmethod
     def finalize(cls, error_handler, fallback: Optional[str] = None):
-        if (
-            fallback
-            and fallback != "auto"
-            and error_handler.fallback == "auto"
-        ):
+        if fallback and fallback != "auto" and error_handler.fallback == "auto":
             error_handler.fallback = fallback
 
         if not isinstance(error_handler, cls):
@@ -121,9 +115,7 @@ class ErrorHandler:
                 exception_key = (ancestor, name)
                 if exception_key in self.cached_handlers:
                     handler = self.cached_handlers[exception_key]
-                    self.cached_handlers[
-                        (exception_class, route_name)
-                    ] = handler
+                    self.cached_handlers[(exception_class, route_name)] = handler
                     return handler
 
                 if ancestor is BaseException:
@@ -206,9 +198,7 @@ class ErrorHandler:
             except AttributeError:
                 url = "unknown"
 
-            error_logger.exception(
-                "Exception occurred while handling uri: %s", url
-            )
+            error_logger.exception("Exception occurred while handling uri: %s", url)
 
 
 class ContentRangeHandler:
@@ -239,9 +229,7 @@ class ContentRangeHandler:
             raise HeaderNotFound("Range Header Not Found")
         unit, _, value = tuple(map(str.strip, _range.partition("=")))
         if unit != "bytes":
-            raise InvalidRangeType(
-                "%s is not a valid Range Type" % (unit,), self
-            )
+            raise InvalidRangeType("%s is not a valid Range Type" % (unit,), self)
         start_b, _, end_b = tuple(map(str.strip, value.partition("-")))
         try:
             self.start = int(start_b) if start_b else None
@@ -257,9 +245,7 @@ class ContentRangeHandler:
             )
         if self.end is None:
             if self.start is None:
-                raise ContentRangeError(
-                    "Invalid for Content Range parameters", self
-                )
+                raise ContentRangeError("Invalid for Content Range parameters", self)
             else:
                 # this case represents `Content-Range: bytes 5-`
                 self.end = self.total - 1
@@ -269,13 +255,10 @@ class ContentRangeHandler:
                 self.start = self.total - self.end
                 self.end = self.total - 1
         if self.start >= self.end:
-            raise ContentRangeError(
-                "Invalid for Content Range parameters", self
-            )
+            raise ContentRangeError("Invalid for Content Range parameters", self)
         self.size = self.end - self.start + 1
         self.headers = {
-            "Content-Range": "bytes %s-%s/%s"
-            % (self.start, self.end, self.total)
+            "Content-Range": "bytes %s-%s/%s" % (self.start, self.end, self.total)
         }
 
     def __bool__(self):

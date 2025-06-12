@@ -9,7 +9,10 @@ from loguru import logger
     "format, validator",
     [
         ("{name}", lambda r: r == "tests.test_formatting"),
-        ("{time}", lambda r: re.fullmatch(r"\d+-\d+-\d+T\d+:\d+:\d+[.,]\d+[+-]\d{4}", r)),
+        (
+            "{time}",
+            lambda r: re.fullmatch(r"\d+-\d+-\d+T\d+:\d+:\d+[.,]\d+[+-]\d{4}", r),
+        ),
         ("{elapsed}", lambda r: re.fullmatch(r"\d:\d{2}:\d{2}\.\d{6}", r)),
         ("{elapsed.seconds}", lambda r: re.fullmatch(r"\d+", r)),
         ("{line}", lambda r: re.fullmatch(r"\d+", r)),
@@ -97,7 +100,12 @@ def test_file_formatters(tmpdir, format, validator, part):
         ),
         ("{:.2f}", [1], {}, "1.00"),
         ("{0:0{three}d}", [5], dict(three=3), "005"),
-        ("{{nope}} {my_dict} {}", ["{{!}}"], dict(my_dict={"a": 1}), "{nope} {'a': 1} {{!}}"),
+        (
+            "{{nope}} {my_dict} {}",
+            ["{{!}}"],
+            dict(my_dict={"a": 1}),
+            "{nope} {'a': 1} {{!}}",
+        ),
     ],
 )
 @pytest.mark.parametrize("use_log_function", [False, True])

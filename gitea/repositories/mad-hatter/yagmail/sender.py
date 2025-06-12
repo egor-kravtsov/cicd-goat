@@ -16,7 +16,7 @@ from yagmail.headers import make_addr_alias_user
 
 
 class SMTP:
-    """ :class:`yagmail.SMTP` is a magic wrapper around
+    """:class:`yagmail.SMTP` is a magic wrapper around
     ``smtplib``'s SMTP connection, and allows messages to be sent."""
 
     def __init__(
@@ -149,7 +149,7 @@ class SMTP:
         message_id=None,
         group_messages=True,
     ):
-        """ Use this to send an email with gmail"""
+        """Use this to send an email with gmail"""
         self.login()
         recipients, msg_string = self.prepare_send(
             to,
@@ -192,7 +192,7 @@ class SMTP:
             self._attempt_send(recipients, msg_string)
 
     def close(self):
-        """ Close the connection to the SMTP server """
+        """Close the connection to the SMTP server"""
         self.is_closed = True
         try:
             self.smtp.quit()
@@ -223,7 +223,9 @@ class SMTP:
         if not self.smtp_skip_login:
             password = self.handle_password(self.user, password)
             self.smtp.login(self.user, password)
-        self.log.info("Connected to SMTP @ %s:%s as %s", self.host, self.port, self.user)
+        self.log.info(
+            "Connected to SMTP @ %s:%s as %s", self.host, self.port, self.user
+        )
 
     @staticmethod
     def handle_password(user, password):
@@ -247,8 +249,10 @@ class SMTP:
             self.smtp.starttls()
         self.smtp.docmd("AUTH", "XOAUTH2 " + auth_string)
 
-    def feedback(self, message="Awesome features! You made my day! How can I contribute?"):
-        """ Most important function. Please send me feedback :-) """
+    def feedback(
+        self, message="Awesome features! You made my day! How can I contribute?"
+    ):
+        """Most important function. Please send me feedback :-)"""
         self.send("kootenpv@gmail.com", "Yagmail feedback", message)
 
     def __del__(self):

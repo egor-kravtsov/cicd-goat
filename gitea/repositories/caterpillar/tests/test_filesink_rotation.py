@@ -31,7 +31,9 @@ def reload_filesink_ctime_functions(monkeypatch):
 
 @pytest.fixture
 def monkeypatch_filesystem(monkeypatch):
-    def monkeypatch_filesystem(raising=None, crtime=None, patch_xattr=False, patch_win32=False):
+    def monkeypatch_filesystem(
+        raising=None, crtime=None, patch_xattr=False, patch_win32=False
+    ):
         filesystem = {}
         __open__ = open
         __stat_result__ = os.stat_result
@@ -56,7 +58,9 @@ def monkeypatch_filesystem(monkeypatch):
 
         def patched_open(filepath, *args, **kwargs):
             if not os.path.exists(filepath):
-                filesystem[os.path.abspath(filepath)] = loguru._datetime.datetime.now().timestamp()
+                filesystem[os.path.abspath(filepath)] = (
+                    loguru._datetime.datetime.now().timestamp()
+                )
             return __open__(filepath, *args, **kwargs)
 
         def patched_setxattr(filepath, attr, val, *arg, **kwargs):
@@ -241,22 +245,37 @@ def test_time_rotation(monkeypatch_date, darwin_filesystem, tmpdir, when, hours)
         now.year, now.month, now.day, now.hour, now.minute, now.second, now.microsecond
     )
 
-    i = logger.add(str(tmpdir.join("test_{time}.log")), format="{message}", rotation=when, mode="w")
+    i = logger.add(
+        str(tmpdir.join("test_{time}.log")), format="{message}", rotation=when, mode="w"
+    )
 
     for h, m in zip(hours, ["a", "b", "c", "d", "e"]):
         now += datetime.timedelta(hours=h)
         monkeypatch_date(
-            now.year, now.month, now.day, now.hour, now.minute, now.second, now.microsecond
+            now.year,
+            now.month,
+            now.day,
+            now.hour,
+            now.minute,
+            now.second,
+            now.microsecond,
         )
         logger.debug(m)
 
     logger.remove(i)
-    assert [f.read() for f in sorted(tmpdir.listdir())] == ["a\n", "b\nc\n", "d\n", "e\n"]
+    assert [f.read() for f in sorted(tmpdir.listdir())] == [
+        "a\n",
+        "b\nc\n",
+        "d\n",
+        "e\n",
+    ]
 
 
 def test_time_rotation_dst(monkeypatch_date, darwin_filesystem, tmpdir):
     monkeypatch_date(2018, 10, 27, 5, 0, 0, 0, "CET", 3600)
-    i = logger.add(str(tmpdir.join("test_{time}.log")), format="{message}", rotation="1 day")
+    i = logger.add(
+        str(tmpdir.join("test_{time}.log")), format="{message}", rotation="1 day"
+    )
     logger.debug("First")
 
     monkeypatch_date(2018, 10, 28, 5, 30, 0, 0, "CEST", 7200)
@@ -346,17 +365,23 @@ def rotation_reopening(tmpdir, monkeypatch_date, delay):
 
 
 @pytest.mark.parametrize("delay", [False, True])
-def test_time_rotation_reopening_windows(tmpdir, monkeypatch_date, windows_filesystem, delay):
+def test_time_rotation_reopening_windows(
+    tmpdir, monkeypatch_date, windows_filesystem, delay
+):
     rotation_reopening(tmpdir, monkeypatch_date, delay)
 
 
 @pytest.mark.parametrize("delay", [False, True])
-def test_time_rotation_reopening_darwin(tmpdir, monkeypatch_date, darwin_filesystem, delay):
+def test_time_rotation_reopening_darwin(
+    tmpdir, monkeypatch_date, darwin_filesystem, delay
+):
     rotation_reopening(tmpdir, monkeypatch_date, delay)
 
 
 @pytest.mark.parametrize("delay", [False, True])
-def test_time_rotation_reopening_linux(tmpdir, monkeypatch_date, linux_filesystem, delay):
+def test_time_rotation_reopening_linux(
+    tmpdir, monkeypatch_date, linux_filesystem, delay
+):
     rotation_reopening(tmpdir, monkeypatch_date, delay)
 
 
@@ -432,7 +457,11 @@ def test_time_rotation_windows_setctime_exception(
 def test_function_rotation(monkeypatch_date, tmpdir):
     monkeypatch_date(2018, 1, 1, 0, 0, 0, 0)
     x = iter([False, True, False])
-    logger.add(str(tmpdir.join("test_{time}.log")), rotation=lambda *_: next(x), format="{message}")
+    logger.add(
+        str(tmpdir.join("test_{time}.log")),
+        rotation=lambda *_: next(x),
+        format="{message}",
+    )
     logger.debug("a")
     assert tmpdir.join("test_2018-01-01_00-00-00_000000.log").read() == "a\n"
 
@@ -452,7 +481,10 @@ def test_function_rotation(monkeypatch_date, tmpdir):
 def test_rotation_at_remove(monkeypatch_date, tmpdir, mode):
     monkeypatch_date(2018, 1, 1, 0, 0, 0, 0)
     i = logger.add(
-        str(tmpdir.join("test_{time:YYYY}.log")), rotation="10 MB", mode=mode, format="{message}"
+        str(tmpdir.join("test_{time:YYYY}.log")),
+        rotation="10 MB",
+        mode=mode,
+        format="{message}",
     )
     logger.debug("test")
     logger.remove(i)
@@ -463,7 +495,9 @@ def test_rotation_at_remove(monkeypatch_date, tmpdir, mode):
 
 @pytest.mark.parametrize("mode", ["a", "a+"])
 def test_no_rotation_at_remove(tmpdir, mode):
-    i = logger.add(str(tmpdir.join("test.log")), rotation="10 MB", mode=mode, format="{message}")
+    i = logger.add(
+        str(tmpdir.join("test.log")), rotation="10 MB", mode=mode, format="{message}"
+    )
     logger.debug("test")
     logger.remove(i)
 
@@ -518,21 +552,30 @@ def test_renaming_rotation_dest_exists_with_time(monkeypatch, monkeypatch_date, 
     def rotate(file, msg):
         return True
 
-    logger.add(str(tmpdir.join("rotate.{time}.log")), rotation=rotate, format="{message}")
+    logger.add(
+        str(tmpdir.join("rotate.{time}.log")), rotation=rotate, format="{message}"
+    )
     logger.info("A")
     logger.info("B")
     logger.info("C")
     assert len(tmpdir.listdir()) == 4
     assert tmpdir.join("rotate.2019-01-02_03-04-05_000006.log").read() == "C\n"
     assert (
-        tmpdir.join("rotate.2019-01-02_03-04-05_000006.2019-01-02_03-04-05_000006.log").read() == ""
+        tmpdir.join(
+            "rotate.2019-01-02_03-04-05_000006.2019-01-02_03-04-05_000006.log"
+        ).read()
+        == ""
     )
     assert (
-        tmpdir.join("rotate.2019-01-02_03-04-05_000006.2019-01-02_03-04-05_000006.2.log").read()
+        tmpdir.join(
+            "rotate.2019-01-02_03-04-05_000006.2019-01-02_03-04-05_000006.2.log"
+        ).read()
         == "A\n"
     )
     assert (
-        tmpdir.join("rotate.2019-01-02_03-04-05_000006.2019-01-02_03-04-05_000006.3.log").read()
+        tmpdir.join(
+            "rotate.2019-01-02_03-04-05_000006.2019-01-02_03-04-05_000006.3.log"
+        ).read()
         == "B\n"
     )
 
@@ -548,7 +591,10 @@ def test_exception_during_rotation(tmpdir, capsys):
         return False
 
     logger.add(
-        str(tmpdir.join("test.log")), rotation=failing_rotation, format="{message}", catch=True
+        str(tmpdir.join("test.log")),
+        rotation=failing_rotation,
+        format="{message}",
+        catch=True,
     )
 
     logger.info("A")
@@ -575,7 +621,10 @@ def test_exception_during_rotation_not_caught(tmpdir, capsys):
         return False
 
     logger.add(
-        str(tmpdir.join("test.log")), rotation=failing_rotation, format="{message}", catch=False
+        str(tmpdir.join("test.log")),
+        rotation=failing_rotation,
+        format="{message}",
+        catch=False,
     )
 
     with pytest.raises(Exception, match=r"Rotation error"):

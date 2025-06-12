@@ -11,9 +11,7 @@ class MiddlewareMixin:
     def _apply_middleware(self, middleware: FutureMiddleware):
         raise NotImplementedError  # noqa
 
-    def middleware(
-        self, middleware_or_request, attach_to="request", apply=True
-    ):
+    def middleware(self, middleware_or_request, attach_to="request", apply=True):
         """
         Decorate and register middleware to be called before a request.
         Can either be called as *@app.middleware* or
@@ -37,13 +35,9 @@ class MiddlewareMixin:
 
         # Detect which way this was called, @middleware or @middleware('AT')
         if callable(middleware_or_request):
-            return register_middleware(
-                middleware_or_request, attach_to=attach_to
-            )
+            return register_middleware(middleware_or_request, attach_to=attach_to)
         else:
-            return partial(
-                register_middleware, attach_to=middleware_or_request
-            )
+            return partial(register_middleware, attach_to=middleware_or_request)
 
     def on_request(self, middleware=None):
         if callable(middleware):

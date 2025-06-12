@@ -242,7 +242,9 @@ class AnsiParser:
                 elif tag in self._tags:
                     raise ValueError('Closing tag "%s" violates nesting rules' % markup)
                 else:
-                    raise ValueError('Closing tag "%s" has no corresponding opening tag' % markup)
+                    raise ValueError(
+                        'Closing tag "%s" has no corresponding opening tag' % markup
+                    )
 
             if tag in {"lvl", "level"}:
                 token = (TokenType.LEVEL, None)
@@ -267,7 +269,9 @@ class AnsiParser:
     def done(self, *, strict=True):
         if strict and self._tags:
             faulty_tag = self._tags.pop(0)
-            raise ValueError('Opening tag "<%s>" has no corresponding closing tag' % faulty_tag)
+            raise ValueError(
+                'Opening tag "<%s>" has no corresponding closing tag' % faulty_tag
+            )
         return self._tokens
 
     def current_color_tokens(self):
@@ -340,10 +344,14 @@ class ColoredFormat:
 
     def make_coloring_message(self, message, *, ansi_level, colored_message):
         messages = [
-            message
-            if color_tokens is None
-            else AnsiParser.wrap(
-                colored_message.tokens, ansi_level=ansi_level, color_tokens=color_tokens
+            (
+                message
+                if color_tokens is None
+                else AnsiParser.wrap(
+                    colored_message.tokens,
+                    ansi_level=ansi_level,
+                    color_tokens=color_tokens,
+                )
             )
             for color_tokens in self._messages_color_tokens
         ]
@@ -389,7 +397,9 @@ class Colorizer:
         formatter = Formatter()
         parser = AnsiParser()
 
-        for literal_text, field_name, format_spec, conversion in formatter.parse(string):
+        for literal_text, field_name, format_spec, conversion in formatter.parse(
+            string
+        ):
             parser.feed(literal_text, raw=recursive)
 
             if field_name is not None:
@@ -443,7 +453,9 @@ class Colorizer:
 
         messages_color_tokens = []
 
-        for literal_text, field_name, format_spec, conversion in formatter.parse(string):
+        for literal_text, field_name, format_spec, conversion in formatter.parse(
+            string
+        ):
             if literal_text and literal_text[-1] in "{}":
                 literal_text += literal_text[-1]
 

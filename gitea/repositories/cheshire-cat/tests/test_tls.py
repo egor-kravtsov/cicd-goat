@@ -38,9 +38,7 @@ def replace_server_name(hostname):
         server_hostname=None,
         session=None,
     ):
-        return orig_wrap_bio(
-            self, incoming, outgoing, server_side, hostname, session
-        )
+        return orig_wrap_bio(self, incoming, outgoing, server_side, hostname, session)
 
     orig_wrap_bio, ssl.SSLContext.wrap_bio = (
         ssl.SSLContext.wrap_bio,
@@ -288,9 +286,7 @@ def test_invalid_ssl_type(app):
         return text("ssl test")
 
     with pytest.raises(ValueError) as excinfo:
-        request, response = app.test_client.get(
-            "/test", server_kwargs={"ssl": False}
-        )
+        request, response = app.test_client.get("/test", server_kwargs={"ssl": False})
 
     assert "Invalid ssl argument" in str(excinfo.value)
 
@@ -369,9 +365,7 @@ def test_logger_vhosts(caplog):
     with caplog.at_level(logging.INFO):
         app.run(host="127.0.0.1", port=42102, ssl=[localhost_dir, sanic_dir])
 
-    logmsg = [
-        m for s, l, m in caplog.record_tuples if m.startswith("Certificate")
-    ][0]
+    logmsg = [m for s, l, m in caplog.record_tuples if m.startswith("Certificate")][0]
 
     assert logmsg == (
         "Certificate vhosts: localhost, 127.0.0.1, 0:0:0:0:0:0:0:1, sanic.example, www.sanic.example, *.sanic.test, 2001:DB8:0:0:0:0:0:541C"

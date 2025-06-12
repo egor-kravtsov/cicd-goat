@@ -23,11 +23,9 @@ if TYPE_CHECKING:
     from typing_extensions import Protocol
 
     class HasGettableStringKeys(Protocol):
-        def keys(self) -> Iterator[str]:
-            ...
+        def keys(self) -> Iterator[str]: ...
 
-        def __getitem__(self, key: str) -> str:
-            ...
+        def __getitem__(self, key: str) -> str: ...
 
 
 __all__ = ["RecentlyUsedContainer", "HTTPHeaderDict"]
@@ -354,12 +352,10 @@ class HTTPHeaderDict(MutableMapping[str, str]):
             self.add(key, value)
 
     @overload
-    def getlist(self, key: str) -> List[str]:
-        ...
+    def getlist(self, key: str) -> List[str]: ...
 
     @overload
-    def getlist(self, key: str, default: _DT) -> Union[List[str], _DT]:
-        ...
+    def getlist(self, key: str, default: _DT) -> Union[List[str], _DT]: ...
 
     def getlist(
         self, key: str, default: Union[_Sentinel, _DT] = _Sentinel.not_passed

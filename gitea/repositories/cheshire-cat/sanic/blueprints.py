@@ -123,9 +123,7 @@ class Blueprint(BaseSanic):
         self.host = host
         self.strict_slashes = strict_slashes
         self.url_prefix = (
-            url_prefix[:-1]
-            if url_prefix and url_prefix.endswith("/")
-            else url_prefix
+            url_prefix[:-1] if url_prefix and url_prefix.endswith("/") else url_prefix
         )
         self.version = version
         self.version_prefix = version_prefix
@@ -133,9 +131,11 @@ class Blueprint(BaseSanic):
     def __repr__(self) -> str:
         args = ", ".join(
             [
-                f'{attr}="{getattr(self, attr)}"'
-                if isinstance(getattr(self, attr), str)
-                else f"{attr}={getattr(self, attr)}"
+                (
+                    f'{attr}="{getattr(self, attr)}"'
+                    if isinstance(getattr(self, attr), str)
+                    else f"{attr}={getattr(self, attr)}"
+                )
                 for attr in (
                     "name",
                     "url_prefix",
@@ -150,9 +150,7 @@ class Blueprint(BaseSanic):
     @property
     def apps(self):
         if not self._apps:
-            raise SanicException(
-                f"{self} has not yet been registered to an app"
-            )
+            raise SanicException(f"{self} has not yet been registered to an app")
         return self._apps
 
     @property
@@ -293,9 +291,7 @@ class Blueprint(BaseSanic):
         opt_version = options.get("version", None)
         opt_strict_slashes = options.get("strict_slashes", None)
         opt_version_prefix = options.get("version_prefix", self.version_prefix)
-        error_format = options.get(
-            "error_format", app.config.FALLBACK_ERROR_FORMAT
-        )
+        error_format = options.get("error_format", app.config.FALLBACK_ERROR_FORMAT)
 
         routes = []
         middleware = []
@@ -320,9 +316,7 @@ class Blueprint(BaseSanic):
                     version_prefix = prefix
                     break
 
-            version = self._extract_value(
-                future.version, opt_version, self.version
-            )
+            version = self._extract_value(future.version, opt_version, self.version)
             strict_slashes = self._extract_value(
                 future.strict_slashes, opt_strict_slashes, self.strict_slashes
             )
@@ -355,9 +349,7 @@ class Blueprint(BaseSanic):
 
             registered.add(apply_route)
             route = app._apply_route(apply_route)
-            operation = (
-                routes.extend if isinstance(route, list) else routes.append
-            )
+            operation = routes.extend if isinstance(route, list) else routes.append
             operation(route)
 
         # Static Files
@@ -404,9 +396,7 @@ class Blueprint(BaseSanic):
             app._apply_signal(future)
 
         self.routes += [route for route in routes if isinstance(route, Route)]
-        self.websocket_routes += [
-            route for route in self.routes if route.ctx.websocket
-        ]
+        self.websocket_routes += [route for route in self.routes if route.ctx.websocket]
         self.middlewares += middleware
         self.exceptions += exception_handlers
         self.listeners.update(dict(listeners))
@@ -428,9 +418,7 @@ class Blueprint(BaseSanic):
         condition = kwargs.pop("condition", {})
         condition.update({"blueprint": self.name})
         kwargs["condition"] = condition
-        await asyncio.gather(
-            *[app.dispatch(*args, **kwargs) for app in self.apps]
-        )
+        await asyncio.gather(*[app.dispatch(*args, **kwargs) for app in self.apps])
 
     def event(self, event: str, timeout: Optional[Union[int, float]] = None):
         events = set()

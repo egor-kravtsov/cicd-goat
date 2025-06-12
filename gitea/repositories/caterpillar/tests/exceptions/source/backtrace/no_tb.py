@@ -3,7 +3,9 @@ import sys
 from loguru import logger
 
 logger.remove()
-logger.add(sys.stderr, format="{message}", colorize=False, backtrace=True, diagnose=False)
+logger.add(
+    sys.stderr, format="{message}", colorize=False, backtrace=True, diagnose=False
+)
 
 
 def f():

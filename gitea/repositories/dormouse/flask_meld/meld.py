@@ -19,7 +19,7 @@ class Meld:
 
     def send_static_file(self, filename):
         """Send a static file from the flask-meld js directory."""
-        directory = Path(pkg_resources.resource_filename('flask_meld', 'meld_js_src'))
+        directory = Path(pkg_resources.resource_filename("flask_meld", "meld_js_src"))
         return send_from_directory(directory, filename)
 
     def init_app(self, app, socketio=None, **kwargs):
@@ -27,10 +27,12 @@ class Meld:
         app.jinja_env.add_extension(MeldScriptsTag)
 
         # Load templates from template dir or app/meld/templates
-        custom_template_loader = jinja2.ChoiceLoader([
-            app.jinja_loader,
-            jinja2.FileSystemLoader(os.path.join(app.root_path, 'meld/templates')),
-        ])
+        custom_template_loader = jinja2.ChoiceLoader(
+            [
+                app.jinja_loader,
+                jinja2.FileSystemLoader(os.path.join(app.root_path, "meld/templates")),
+            ]
+        )
 
         app.jinja_loader = custom_template_loader
         if socketio:

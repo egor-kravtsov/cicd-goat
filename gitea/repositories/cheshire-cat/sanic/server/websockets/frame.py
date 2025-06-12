@@ -58,9 +58,7 @@ class WebsocketFrameAssembler:
         self.read_mutex = asyncio.Lock()
         self.write_mutex = asyncio.Lock()
 
-        self.completed_queue = asyncio.Queue(
-            maxsize=1
-        )  # type: asyncio.Queue[Data]
+        self.completed_queue = asyncio.Queue(maxsize=1)  # type: asyncio.Queue[Data]
 
         # put() sets this event to tell get() that a message can be fetched.
         self.message_complete = asyncio.Event()
@@ -156,8 +154,7 @@ class WebsocketFrameAssembler:
                 # and get_in_progress check, this exception is here
                 # as a failsafe
                 raise ServerError(
-                    "Websocket get() found a message when "
-                    "state was already fetched."
+                    "Websocket get() found a message when " "state was already fetched."
                 )
             self.message_fetched.set()
             self.chunks = []

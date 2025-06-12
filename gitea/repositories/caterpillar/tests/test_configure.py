@@ -24,7 +24,10 @@ def test_handlers(capsys, tmpdir):
 
 
 def test_levels(writer):
-    levels = [{"name": "my_level", "icon": "X", "no": 12}, {"name": "DEBUG", "icon": "!"}]
+    levels = [
+        {"name": "my_level", "icon": "X", "no": 12},
+        {"name": "DEBUG", "icon": "!"},
+    ]
 
     logger.add(writer, format="{level.no}|{level.name}|{level.icon}|{message}")
     logger.configure(levels=levels)
@@ -68,7 +71,9 @@ def test_activation(writer):
 
 def test_dict_unpacking(writer):
     config = {
-        "handlers": [{"sink": writer, "format": "{level.no} - {extra[x]} {extra[z]} - {message}"}],
+        "handlers": [
+            {"sink": writer, "format": "{level.no} - {extra[x]} {extra[z]} - {message}"}
+        ],
         "levels": [{"name": "test", "no": 30}],
         "extra": {"x": 1, "y": 2, "z": 3},
     }
@@ -168,7 +173,11 @@ def test_configure_handler_using_new_level(writer):
     logger.configure(
         levels=[{"name": "CONF_LVL", "no": 33, "icon": "", "color": ""}],
         handlers=[
-            {"sink": writer, "level": "CONF_LVL", "format": "{level.name} {level.no} {message}"}
+            {
+                "sink": writer,
+                "level": "CONF_LVL",
+                "format": "{level.name} {level.no} {message}",
+            }
         ],
     )
 
@@ -180,7 +189,12 @@ def test_configure_filter_using_new_level(writer):
     logger.configure(
         levels=[{"name": "CONF_LVL_2", "no": 33, "icon": "", "color": ""}],
         handlers=[
-            {"sink": writer, "level": 0, "filter": {"tests": "CONF_LVL_2"}, "format": "{message}"}
+            {
+                "sink": writer,
+                "level": 0,
+                "filter": {"tests": "CONF_LVL_2"},
+                "format": "{message}",
+            }
         ],
     )
 
@@ -200,7 +214,9 @@ def test_configure_before_bind(writer):
     logger_a.debug("aaa")
     logger_b.debug("bbb")
 
-    assert writer.read() == ("default_a default_b init\n" "A default_b aaa\n" "default_a B bbb\n")
+    assert writer.read() == (
+        "default_a default_b init\n" "A default_b aaa\n" "default_a B bbb\n"
+    )
 
 
 def test_configure_after_bind(writer):
@@ -215,4 +231,6 @@ def test_configure_after_bind(writer):
     logger_a.debug("aaa")
     logger_b.debug("bbb")
 
-    assert writer.read() == ("default_a default_b init\n" "A default_b aaa\n" "default_a B bbb\n")
+    assert writer.read() == (
+        "default_a default_b init\n" "A default_b aaa\n" "default_a B bbb\n"
+    )

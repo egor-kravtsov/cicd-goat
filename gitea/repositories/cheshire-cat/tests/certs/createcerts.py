@@ -51,9 +51,7 @@ def selfsigned(key, common_name, san):
         .not_valid_before(datetime.utcnow())
         .not_valid_after(datetime.utcnow() + timedelta(days=365.25 * 8))
         .add_extension(
-            KeyUsage(
-                True, False, False, False, False, False, False, False, False
-            ),
+            KeyUsage(True, False, False, False, False, False, False, False, False),
             critical=True,
         )
         .add_extension(
@@ -72,9 +70,11 @@ def selfsigned(key, common_name, san):
         .add_extension(
             SubjectAlternativeName(
                 [
-                    IPAddress(ip_address(n))
-                    if n[0].isdigit() or ":" in n
-                    else DNSName(n)
+                    (
+                        IPAddress(ip_address(n))
+                        if n[0].isdigit() or ":" in n
+                        else DNSName(n)
+                    )
                     for n in san
                 ]
             ),

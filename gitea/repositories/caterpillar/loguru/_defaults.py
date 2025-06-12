@@ -22,7 +22,8 @@ def env(key, type_, default=None):
             return int(val)
         except ValueError:
             raise ValueError(
-                "Invalid environment variable '%s' (expected an integer): '%s'" % (key, val)
+                "Invalid environment variable '%s' (expected an integer): '%s'"
+                % (key, val)
             ) from None
 
 

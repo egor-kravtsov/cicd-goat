@@ -97,9 +97,11 @@ def listen(*event_names: str):
     Params:
         *event_names (str): One or more event names to listen for.
     """
+
     def dec(func):
         func._meld_event_names = event_names
         return func
+
     return dec
 
 

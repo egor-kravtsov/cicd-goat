@@ -89,6 +89,7 @@ HAS_IPV6 = _has_ipv6("::1")
 
 class NoIPv6Warning(HTTPWarning):
     "IPv6 is not available"
+
     pass
 
 

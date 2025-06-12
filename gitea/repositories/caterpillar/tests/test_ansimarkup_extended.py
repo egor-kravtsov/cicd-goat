@@ -12,7 +12,10 @@ from .conftest import parse
         ("<bg red>1</bg red>", B.RED + "1" + S.RESET_ALL),
         ("<bg BLACK>1</bg BLACK>", B.BLACK + "1" + S.RESET_ALL),
         ("<bg light-green>1</bg light-green>", B.LIGHTGREEN_EX + "1" + S.RESET_ALL),
-        ("<bg LIGHT-MAGENTA>1</bg LIGHT-MAGENTA>", B.LIGHTMAGENTA_EX + "1" + S.RESET_ALL),
+        (
+            "<bg LIGHT-MAGENTA>1</bg LIGHT-MAGENTA>",
+            B.LIGHTMAGENTA_EX + "1" + S.RESET_ALL,
+        ),
     ],
 )
 def test_background_colors(text, expected):
@@ -82,11 +85,21 @@ def test_rgb_colors(text, expected):
         ),
         (
             "<bg #00a000><fg #FF0000>1</fg #FF0000></bg #00a000>",
-            "\x1b[48;2;0;160;0m" "\x1b[38;2;255;0;0m" "1" "\x1b[0m" "\x1b[48;2;0;160;0m" "\x1b[0m",
+            "\x1b[48;2;0;160;0m"
+            "\x1b[38;2;255;0;0m"
+            "1"
+            "\x1b[0m"
+            "\x1b[48;2;0;160;0m"
+            "\x1b[0m",
         ),
         (
             "<bg 0,160,0><fg 255,0,0>1</fg 255,0,0></bg 0,160,0>",
-            "\x1b[48;2;0;160;0m" "\x1b[38;2;255;0;0m" "1" "\x1b[0m" "\x1b[48;2;0;160;0m" "\x1b[0m",
+            "\x1b[48;2;0;160;0m"
+            "\x1b[38;2;255;0;0m"
+            "1"
+            "\x1b[0m"
+            "\x1b[48;2;0;160;0m"
+            "\x1b[0m",
         ),
     ],
 )
@@ -151,7 +164,9 @@ def test_invalid_hex(text, strip):
         parse(text, strip=strip)
 
 
-@pytest.mark.parametrize("text", ["<fg 256>1</fg 256>", "<bg 2222>1</bg 2222>", "<bg -1>1</bg -1>"])
+@pytest.mark.parametrize(
+    "text", ["<fg 256>1</fg 256>", "<bg 2222>1</bg 2222>", "<bg -1>1</bg -1>"]
+)
 @pytest.mark.parametrize("strip", [True, False])
 def test_invalid_8bit(text, strip):
     with pytest.raises(ValueError):

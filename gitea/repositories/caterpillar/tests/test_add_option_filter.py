@@ -97,7 +97,13 @@ def test_invalid_filter(writer, filter):
 
 @pytest.mark.parametrize(
     "filter",
-    [{1: "DEBUG"}, {object(): 10}, {"foo": None}, {"foo": 2.5}, {"a": "DEBUG", "b": object()}],
+    [
+        {1: "DEBUG"},
+        {object(): 10},
+        {"foo": None},
+        {"foo": 2.5},
+        {"a": "DEBUG", "b": object()},
+    ],
 )
 def test_invalid_filter_dict_types(writer, filter):
     with pytest.raises(TypeError):
@@ -105,7 +111,8 @@ def test_invalid_filter_dict_types(writer, filter):
 
 
 @pytest.mark.parametrize(
-    "filter", [{"foo": "UNKNOWN_LEVEL"}, {"tests": -1}, {"tests.test_add_option_filter": ""}]
+    "filter",
+    [{"foo": "UNKNOWN_LEVEL"}, {"tests": -1}, {"tests.test_add_option_filter": ""}],
 )
 def test_invalid_filter_dict_values(writer, filter):
     with pytest.raises(ValueError):

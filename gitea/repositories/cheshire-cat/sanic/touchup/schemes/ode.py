@@ -14,17 +14,15 @@ class OptionalDispatchEvent(BaseScheme):
     def __init__(self, app) -> None:
         super().__init__(app)
 
-        self._registered_events = [
-            signal.path for signal in app.signal_router.routes
-        ]
+        self._registered_events = [signal.path for signal in app.signal_router.routes]
 
     def run(self, method, module_globals):
         raw_source = getsource(method)
         src = dedent(raw_source)
         tree = parse(src)
-        node = RemoveDispatch(
-            self._registered_events, self.app.state.verbosity
-        ).visit(tree)
+        node = RemoveDispatch(self._registered_events, self.app.state.verbosity).visit(
+            tree
+        )
         compiled_src = compile(node, method.__name__, "exec")
         exec_locals: Dict[str, Any] = {}
         exec(compiled_src, module_globals, exec_locals)  # nosec

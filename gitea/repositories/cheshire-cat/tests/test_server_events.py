@@ -103,9 +103,7 @@ async def test_trigger_before_events_create_server(app):
     async def init_db(app, loop):
         app.db = MySanicDb()
 
-    srv = await app.create_server(
-        debug=True, return_asyncio_server=True, port=PORT
-    )
+    srv = await app.create_server(debug=True, return_asyncio_server=True, port=PORT)
     await srv.startup()
     await srv.before_start()
 
@@ -186,12 +184,9 @@ def test_create_server_trigger_events(app):
 @pytest.mark.asyncio
 async def test_missing_startup_raises_exception(app):
     @app.listener("before_server_start")
-    async def init_db(app, loop):
-        ...
+    async def init_db(app, loop): ...
 
-    srv = await app.create_server(
-        debug=True, return_asyncio_server=True, port=PORT
-    )
+    srv = await app.create_server(debug=True, return_asyncio_server=True, port=PORT)
 
     with pytest.raises(SanicException):
         await srv.before_start()

@@ -2,13 +2,13 @@ import os
 
 
 class raw(str):
-    """ Ensure that a string is treated as text and will not receive 'magic'. """
+    """Ensure that a string is treated as text and will not receive 'magic'."""
 
     pass
 
 
 class inline(str):
-    """ Only needed when wanting to inline an image rather than attach it """
+    """Only needed when wanting to inline an image rather than attach it"""
 
     pass
 

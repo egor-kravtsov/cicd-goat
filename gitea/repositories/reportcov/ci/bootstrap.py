@@ -38,7 +38,7 @@ def exec_in_env():
         check_call([join(bin_path, "pip"), "install", "jinja2", "tox"])
     python_executable = join(bin_path, "python")
     if not os.path.exists(python_executable):
-        python_executable += '.exe'
+        python_executable += ".exe"
 
     print(f"Re-executing with: {python_executable}")
     print("+ exec", python_executable, __file__, "--no-env")
@@ -54,25 +54,34 @@ def main():
         loader=jinja2.FileSystemLoader(join(base_path, "ci", "templates")),
         trim_blocks=True,
         lstrip_blocks=True,
-        keep_trailing_newline=True
+        keep_trailing_newline=True,
     )
 
     tox_environments = [
         line.strip()
         # WARNING: 'tox' must be installed globally or in the project's virtualenv
-        for line in subprocess.check_output(['tox', '--listenvs'], universal_newlines=True).splitlines()
+        for line in subprocess.check_output(
+            ["tox", "--listenvs"], universal_newlines=True
+        ).splitlines()
     ]
-    tox_environments = [line for line in tox_environments if line not in ['clean', 'report', 'docs', 'check']]
+    tox_environments = [
+        line
+        for line in tox_environments
+        if line not in ["clean", "report", "docs", "check"]
+    ]
 
     template_vars = defaultdict(list)
-    template_vars['tox_environments'] = tox_environments
+    template_vars["tox_environments"] = tox_environments
     for env in tox_environments:
-        first, _ = env.split('-', 1)
-        template_vars['%s_environments' % first].append(env)
+        first, _ = env.split("-", 1)
+        template_vars["%s_environments" % first].append(env)
 
     for name in os.listdir(join("ci", "templates")):
         with open(join(base_path, name), "w") as fh:
-            fh.write('# NOTE: this file is auto-generated via ci/bootstrap.py (ci/templates/%s).\n' % name)
+            fh.write(
+                "# NOTE: this file is auto-generated via ci/bootstrap.py (ci/templates/%s).\n"
+                % name
+            )
             fh.write(jinja.get_template(name).render(**template_vars))
         print(f"Wrote {name}")
     print("DONE.")

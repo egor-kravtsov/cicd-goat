@@ -11,7 +11,9 @@ def normalize(exception):
     """Normalize exception output for reproducible test cases"""
     if os.name == "nt":
         exception = re.sub(
-            r'File[^"]+"[^"]+\.py[^"]*"', lambda m: m.group().replace("\\", "/"), exception
+            r'File[^"]+"[^"]+\.py[^"]*"',
+            lambda m: m.group().replace("\\", "/"),
+            exception,
         )
         exception = re.sub(r"(\r\n|\r|\n)", "\n", exception)
 
@@ -19,14 +21,14 @@ def normalize(exception):
 
         def fix_filepath(match):
             filepath = match.group(1)
-            pattern = (
-                r'((?:\x1b\[[0-9]*m)+)([^"]+?)((?:\x1b\[[0-9]*m)+)([^"]+?)((?:\x1b\[[0-9]*m)+)'
-            )
+            pattern = r'((?:\x1b\[[0-9]*m)+)([^"]+?)((?:\x1b\[[0-9]*m)+)([^"]+?)((?:\x1b\[[0-9]*m)+)'
             match = re.match(pattern, filepath)
             start_directory = os.path.dirname(os.path.dirname(__file__))
             if match:
                 groups = list(match.groups())
-                groups[1] = os.path.relpath(os.path.abspath(groups[1]), start_directory) + "/"
+                groups[1] = (
+                    os.path.relpath(os.path.abspath(groups[1]), start_directory) + "/"
+                )
                 relpath = "".join(groups)
             else:
                 relpath = os.path.relpath(os.path.abspath(filepath), start_directory)
@@ -45,7 +47,9 @@ def normalize(exception):
             exception = re.sub(r"\n *\^ *\n", "\n", exception)
 
     exception = re.sub(
-        r'"[^"]*/somelib/__init__.py"', '"/usr/lib/python/somelib/__init__.py"', exception
+        r'"[^"]*/somelib/__init__.py"',
+        '"/usr/lib/python/somelib/__init__.py"',
+        exception,
     )
 
     exception = re.sub(r"\b0x[0-9a-fA-F]+\b", "0xDEADBEEF", exception)
@@ -53,10 +57,12 @@ def normalize(exception):
     if platform.python_implementation() == "PyPy":
         exception = (
             exception.replace(
-                "<function str.isdigit at 0xDEADBEEF>", "<method 'isdigit' of 'str' objects>"
+                "<function str.isdigit at 0xDEADBEEF>",
+                "<method 'isdigit' of 'str' objects>",
             )
             .replace(
-                "<function coroutine.send at 0xDEADBEEF>", "<method 'send' of 'coroutine' objects>"
+                "<function coroutine.send at 0xDEADBEEF>",
+                "<method 'send' of 'coroutine' objects>",
             )
             .replace(
                 "<function NoneType.__bool__ at 0xDEADBEEF>",
@@ -79,7 +85,9 @@ def compare_exception(dirname, filename):
     cwd = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     python = sys.executable or "python"
     filepath = os.path.join("tests", "exceptions", "source", dirname, filename + ".py")
-    outpath = os.path.join(cwd, "tests", "exceptions", "output", dirname, filename + ".txt")
+    outpath = os.path.join(
+        cwd, "tests", "exceptions", "output", dirname, filename + ".txt"
+    )
 
     with subprocess.Popen(
         [python, filepath],

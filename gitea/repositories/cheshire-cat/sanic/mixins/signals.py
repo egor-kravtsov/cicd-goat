@@ -65,8 +65,7 @@ class SignalMixin:
     ):
         if not handler:
 
-            async def noop():
-                ...
+            async def noop(): ...
 
             handler = noop
         self.signal(event=event, condition=condition)(handler)

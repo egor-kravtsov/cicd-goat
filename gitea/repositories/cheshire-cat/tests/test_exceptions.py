@@ -193,16 +193,13 @@ def test_handled_unhandled_exception(exception_app):
 
     message = " ".join(soup.p.text.split())
     assert message == (
-        "The server encountered an internal error and "
-        "cannot complete your request."
+        "The server encountered an internal error and " "cannot complete your request."
     )
 
 
 def test_exception_in_exception_handler(exception_app):
     """Test that an exception thrown in an error handler is handled"""
-    request, response = exception_app.test_client.get(
-        "/error_in_error_handler_handler"
-    )
+    request, response = exception_app.test_client.get("/error_in_error_handler_handler")
     assert response.status == 500
     assert response.body == b"An error occurred while handling an error"
 

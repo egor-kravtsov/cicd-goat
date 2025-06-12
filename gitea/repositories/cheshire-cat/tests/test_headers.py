@@ -46,7 +46,7 @@ def raised_ceiling():
         ),
         (
             'form-data; name="files"; filename="fo\\"o;bar\\"',
-            ("form-data", {"name": "files", "filename": 'fo"o;bar\\'})
+            ("form-data", {"name": "files", "filename": 'fo"o;bar\\'}),
             # cgi.parse_header:
             # ('form-data', {'name': 'files', 'filename': 'fo"o;bar\\'})
             # werkzeug.parse_options_header:
@@ -57,7 +57,7 @@ def raised_ceiling():
             # Chrome:
             # Content-Disposition: form-data; name="foo%22;bar\"; filename="😀"
             'form-data; name="foo%22;bar\\"; filename="😀"',
-            ("form-data", {"name": 'foo";bar\\', "filename": "😀"})
+            ("form-data", {"name": 'foo";bar\\', "filename": "😀"}),
             # cgi: ('form-data', {'name': 'foo%22;bar"; filename="😀'})
             # werkzeug: ('form-data', {'name': 'foo%22;bar"; filename='})
         ),
@@ -65,7 +65,7 @@ def raised_ceiling():
             # Firefox:
             # Content-Disposition: form-data; name="foo\";bar\"; filename="😀"
             'form-data; name="foo\\";bar\\"; filename="😀"',
-            ("form-data", {"name": 'foo";bar\\', "filename": "😀"})
+            ("form-data", {"name": 'foo";bar\\', "filename": "😀"}),
             # cgi: ('form-data', {'name': 'foo";bar"; filename="😀'})
             # werkzeug: ('form-data', {'name': 'foo";bar"; filename='})
         ),
@@ -203,9 +203,7 @@ def test_request_line(app):
 )
 def test_parse_accept_ordered_okay(raw):
     ordered = headers.parse_accept(raw)
-    expected_subtype = (
-        "*" if all(q.subtype.is_wildcard for q in ordered) else "first"
-    )
+    expected_subtype = "*" if all(q.subtype.is_wildcard for q in ordered) else "first"
     assert ordered[0].type_ == "show"
     assert ordered[0].subtype == expected_subtype
 

@@ -5,7 +5,9 @@ from loguru import logger
 
 def test(diagnose, backtrace):
     logger.remove()
-    logger.add(sys.stderr, format="", diagnose=diagnose, backtrace=backtrace, colorize=True)
+    logger.add(
+        sys.stderr, format="", diagnose=diagnose, backtrace=backtrace, colorize=True
+    )
 
     try:
         1 / 0

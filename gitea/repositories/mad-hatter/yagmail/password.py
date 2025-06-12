@@ -5,7 +5,7 @@ except (ImportError, NameError, RuntimeError):
 
 
 def handle_password(user, password):  # pragma: no cover
-    """ Handles getting the password"""
+    """Handles getting the password"""
     if password is None:
         try:
             password = keyring.get_password("yagmail", user)
@@ -33,5 +33,5 @@ def handle_password(user, password):  # pragma: no cover
 
 
 def register(username, password):
-    """ Use this to add a new gmail account to your OS' keyring so it can be used in yagmail """
+    """Use this to add a new gmail account to your OS' keyring so it can be used in yagmail"""
     keyring.set_password("yagmail", username, password)

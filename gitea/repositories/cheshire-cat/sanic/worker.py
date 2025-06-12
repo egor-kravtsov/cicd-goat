@@ -69,9 +69,7 @@ class GunicornWorker(base.Worker):
         self._server_settings["signal"] = self.signal
         self._server_settings.pop("sock")
         self._await(self.app.callable._startup())
-        self._await(
-            self.app.callable._server_event("init", "before", loop=self.loop)
-        )
+        self._await(self.app.callable._server_event("init", "before", loop=self.loop))
 
         main_start = self._server_settings.pop("main_start", None)
         main_stop = self._server_settings.pop("main_stop", None)
@@ -86,15 +84,11 @@ class GunicornWorker(base.Worker):
             self._await(self._run())
             self.app.callable.is_running = True
             self._await(
-                self.app.callable._server_event(
-                    "init", "after", loop=self.loop
-                )
+                self.app.callable._server_event("init", "after", loop=self.loop)
             )
             self.loop.run_until_complete(self._check_alive())
             self._await(
-                self.app.callable._server_event(
-                    "shutdown", "before", loop=self.loop
-                )
+                self.app.callable._server_event("shutdown", "before", loop=self.loop)
             )
             self.loop.run_until_complete(self.close())
         except BaseException:
@@ -102,9 +96,7 @@ class GunicornWorker(base.Worker):
         finally:
             try:
                 self._await(
-                    self.app.callable._server_event(
-                        "shutdown", "after", loop=self.loop
-                    )
+                    self.app.callable._server_event("shutdown", "after", loop=self.loop)
                 )
             except BaseException:
                 traceback.print_exc()
@@ -134,9 +126,7 @@ class GunicornWorker(base.Worker):
             # gracefully shutdown timeout
             start_shutdown = 0
             graceful_shutdown_timeout = self.cfg.graceful_timeout
-            while self.connections and (
-                start_shutdown < graceful_shutdown_timeout
-            ):
+            while self.connections and (start_shutdown < graceful_shutdown_timeout):
                 await asyncio.sleep(0.1)
                 start_shutdown = start_shutdown + 0.1
 
@@ -173,9 +163,7 @@ class GunicornWorker(base.Worker):
                 )
                 if self.max_requests and req_count > self.max_requests:
                     self.alive = False
-                    self.log.info(
-                        "Max requests exceeded, shutting down: %s", self
-                    )
+                    self.log.info("Max requests exceeded, shutting down: %s", self)
                 elif pid == os.getpid() and self.ppid != os.getppid():
                     self.alive = False
                     self.log.info("Parent changed, shutting down: %s", self)

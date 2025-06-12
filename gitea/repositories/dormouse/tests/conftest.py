@@ -64,7 +64,7 @@ def app_factory(tmpdir_factory):
 
 @pytest.fixture(scope="function")
 def browser_client(pytestconfig):
-    current_test = os.getenv('PYTEST_CURRENT_TEST')
+    current_test = os.getenv("PYTEST_CURRENT_TEST")
     base = pytestconfig.rootdir
     meld_base = Path(f"{base}/meld_test_project/meld")
     index = Path(f"{base}/meld_test_project/templates/index.html")
@@ -121,9 +121,8 @@ def insert_component_to_index(index, component_name):
     with index.open("w") as f:
         class_def = [
             '{% extends "base.html" %}',
-            '{% block content %}',
-            f"{{% meld '{component_name}' %}}"
-            '{% endblock %}',
+            "{% block content %}",
+            f"{{% meld '{component_name}' %}}" "{% endblock %}",
         ]
         f.writelines(f"{line}\n" for line in class_def)
 

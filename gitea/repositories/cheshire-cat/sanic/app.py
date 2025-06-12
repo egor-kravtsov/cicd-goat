@@ -294,9 +294,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
             raise InvalidUsage(f"Invalid event: {event}. Use one of: {valid}")
 
         if "." in _event:
-            self.signal(_event.value)(
-                partial(self._listener, listener=listener)
-            )
+            self.signal(_event.value)(partial(self._listener, listener=listener))
         else:
             self.listeners[_event.value].append(listener)
 
@@ -420,9 +418,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
                 middleware.middleware, route_names, middleware.attach_to
             )
         else:
-            return self.register_middleware(
-                middleware.middleware, middleware.attach_to
-            )
+            return self.register_middleware(middleware.middleware, middleware.attach_to)
 
     def _apply_signal(self, signal: FutureSignal) -> Signal:
         return self.signal_router.add(*signal)
@@ -446,9 +442,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
             fail_not_found=fail_not_found,
         )
 
-    async def event(
-        self, event: str, timeout: Optional[Union[int, float]] = None
-    ):
+    async def event(self, event: str, timeout: Optional[Union[int, float]] = None):
         signal = self.signal_router.name_index.get(event)
         if not signal:
             if self.config.EVENT_AUTOREGISTER:
@@ -475,9 +469,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
 
     def blueprint(
         self,
-        blueprint: Union[
-            Blueprint, List[Blueprint], Tuple[Blueprint], BlueprintGroup
-        ],
+        blueprint: Union[Blueprint, List[Blueprint], Tuple[Blueprint], BlueprintGroup],
         **options: Any,
     ):
         """Register a blueprint on the application.
@@ -504,14 +496,12 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
 
                     for _attr in ["version", "strict_slashes"]:
                         if getattr(item, _attr) is None:
-                            params[_attr] = getattr(
-                                blueprint, _attr
-                            ) or options.get(_attr)
+                            params[_attr] = getattr(blueprint, _attr) or options.get(
+                                _attr
+                            )
                     if item.version_prefix == "/v":
                         if blueprint.version_prefix == "/v":
-                            params["version_prefix"] = options.get(
-                                "version_prefix"
-                            )
+                            params["version_prefix"] = options.get("version_prefix")
                         else:
                             params["version_prefix"] = blueprint.version_prefix
                 self.blueprint(item, **params)
@@ -525,10 +515,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
             self.blueprints[blueprint.name] = blueprint
             self._blueprint_order.append(blueprint)
 
-        if (
-            self.strict_slashes is not None
-            and blueprint.strict_slashes is None
-        ):
+        if self.strict_slashes is not None and blueprint.strict_slashes is None:
             blueprint.strict_slashes = self.strict_slashes
         blueprint.register(self, options)
 
@@ -592,9 +579,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
 
         route = self.router.find_route_by_view_name(view_name, **kw)
         if not route:
-            raise URLBuildError(
-                f"Endpoint with name `{view_name}` was not found"
-            )
+            raise URLBuildError(f"Endpoint with name `{view_name}` was not found")
 
         uri = route.path
 
@@ -633,9 +618,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
         scheme = kwargs.pop("_scheme", "")
         if route.ctx.hosts and external:
             if not host and len(route.ctx.hosts) > 1:
-                raise ValueError(
-                    f"Host is ambiguous: {', '.join(route.ctx.hosts)}"
-                )
+                raise ValueError(f"Host is ambiguous: {', '.join(route.ctx.hosts)}")
             elif host and host not in route.ctx.hosts:
                 raise ValueError(
                     f"Requested host ({host}) is not available for this "
@@ -738,9 +721,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
         # -------------------------------------------- #
         # Request Middleware
         # -------------------------------------------- #
-        response = await self._run_request_middleware(
-            request, request_name=None
-        )
+        response = await self._run_request_middleware(request, request_name=None)
         # No middleware results
         if not response:
             try:
@@ -752,10 +733,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
                     response = self.error_handler.default(request, e)
                 elif self.debug:
                     response = HTTPResponse(
-                        (
-                            f"Error while handling error: {e}\n"
-                            f"Stack: {format_exc()}"
-                        ),
+                        (f"Error while handling error: {e}\n" f"Stack: {format_exc()}"),
                         status=500,
                     )
                 else:
@@ -785,9 +763,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
             )
             await response.send(end_stream=True)
         else:
-            raise ServerError(
-                f"Invalid response type {response!r} (need HTTPResponse)"
-            )
+            raise ServerError(f"Invalid response type {response!r} (need HTTPResponse)")
 
     async def handle_request(self, request: Request):  # no cov
         """Take a request from the HTTP Server and return a response object
@@ -892,8 +868,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
             else:
                 if not hasattr(handler, "is_websocket"):
                     raise ServerError(
-                        f"Invalid response type {response!r} "
-                        "(need HTTPResponse)"
+                        f"Invalid response type {response!r} " "(need HTTPResponse)"
                     )
 
         except CancelledError:
@@ -1046,9 +1021,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
             for directory in reload_dir:
                 direc = Path(directory)
                 if not direc.is_dir():
-                    logger.warning(
-                        f"Directory {directory} could not be located"
-                    )
+                    logger.warning(f"Directory {directory} could not be located")
                 self.state.reload_dirs.add(Path(directory))
 
         if loop is not None:
@@ -1068,9 +1041,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
             host, port = host or "127.0.0.1", port or 8000
 
         if protocol is None:
-            protocol = (
-                WebSocketProtocol if self.websocket_enabled else HttpProtocol
-            )
+            protocol = WebSocketProtocol if self.websocket_enabled else HttpProtocol
 
         # Set explicitly passed configuration values
         for attribute, value in {
@@ -1116,9 +1087,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
             else:
                 serve_multiple(server_settings, workers)
         except BaseException:
-            error_logger.exception(
-                "Experienced exception while trying to serve"
-            )
+            error_logger.exception("Experienced exception while trying to serve")
             raise
         finally:
             self.is_running = False
@@ -1194,9 +1163,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
             host, port = host or "127.0.0.1", port or 8000
 
         if protocol is None:
-            protocol = (
-                WebSocketProtocol if self.websocket_enabled else HttpProtocol
-            )
+            protocol = WebSocketProtocol if self.websocket_enabled else HttpProtocol
 
         # if access_log is passed explicitly change config.ACCESS_LOG
         if access_log is not None:
@@ -1230,13 +1197,9 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
             asyncio_server_kwargs=asyncio_server_kwargs, **server_settings
         )
 
-    async def _run_request_middleware(
-        self, request, request_name=None
-    ):  # no cov
+    async def _run_request_middleware(self, request, request_name=None):  # no cov
         # The if improves speed.  I don't know why
-        named_middleware = self.named_request_middleware.get(
-            request_name, deque()
-        )
+        named_middleware = self.named_request_middleware.get(request_name, deque())
         applicable_middleware = self.request_middleware + named_middleware
 
         # request.request_middleware_started is meant as a stop-gap solution
@@ -1276,9 +1239,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
     async def _run_response_middleware(
         self, request, response, request_name=None
     ):  # no cov
-        named_middleware = self.named_response_middleware.get(
-            request_name, deque()
-        )
+        named_middleware = self.named_response_middleware.get(request_name, deque())
         applicable_middleware = self.response_middleware + named_middleware
         if applicable_middleware:
             for middleware in applicable_middleware:
@@ -1433,9 +1394,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
         await prepped
 
     @staticmethod
-    async def _listener(
-        app: Sanic, loop: AbstractEventLoop, listener: ListenerType
-    ):
+    async def _listener(app: Sanic, loop: AbstractEventLoop, listener: ListenerType):
         maybe_coro = listener(app, loop)
         if maybe_coro and isawaitable(maybe_coro):
             await maybe_coro
@@ -1547,10 +1506,7 @@ class Sanic(BaseSanic, metaclass=TouchUpMeta):
                     reload_display += ", ".join(
                         [
                             "",
-                            *(
-                                str(path.absolute())
-                                for path in self.state.reload_dirs
-                            ),
+                            *(str(path.absolute()) for path in self.state.reload_dirs),
                         ]
                     )
                 display["auto-reload"] = reload_display

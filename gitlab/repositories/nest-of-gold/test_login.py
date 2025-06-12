@@ -14,10 +14,13 @@ def client(app):
 
 def test_login(client):
     response = client.get("/login")
-    assert b'''
+    assert (
+        b"""
                <form action='login' method='POST'>
                 <input type='text' name='email' id='email' placeholder='email'/>
                 <input type='password' name='password' id='password' placeholder='password'/>
                 <input type='submit' name='submit'/>
                </form>
-               ''' in response.data
+               """
+        in response.data
+    )

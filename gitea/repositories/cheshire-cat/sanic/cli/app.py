@@ -15,8 +15,7 @@ from sanic.log import error_logger
 from sanic.simple import create_simple_server
 
 
-class SanicArgumentParser(ArgumentParser):
-    ...
+class SanicArgumentParser(ArgumentParser): ...
 
 
 class SanicCLI:
@@ -54,9 +53,7 @@ Or, a path to a directory to run as a simple HTTP server:
         )
         self.parser._positionals.title = "Required\n========\n  Positional"
         self.parser._optionals.title = "Optional\n========\n  General"
-        self.main_process = (
-            os.environ.get("SANIC_RELOADER_PROCESS", "") != "true"
-        )
+        self.main_process = os.environ.get("SANIC_RELOADER_PROCESS", "") != "true"
         self.args: List[Any] = []
 
     def attach(self):

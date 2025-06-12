@@ -8,12 +8,12 @@ except (ImportError, NameError, RuntimeError):
 
 
 def register(username, password):
-    """ Use this to add a new gmail account to your OS' keyring so it can be used in yagmail """
+    """Use this to add a new gmail account to your OS' keyring so it can be used in yagmail"""
     keyring.set_password("yagmail", username, password)
 
 
 def main():
-    """ This is the function that is run from commandline with `yagmail` """
+    """This is the function that is run from commandline with `yagmail`"""
     import argparse
 
     parser = argparse.ArgumentParser(description="Send a (g)mail with yagmail.")
@@ -27,4 +27,9 @@ def main():
     )
     args = parser.parse_args()
     yag = SMTP(args.user, args.password)
-    yag.send(to=args.to, subject=args.subject, contents=args.contents, attachments=args.attachments)
+    yag.send(
+        to=args.to,
+        subject=args.subject,
+        contents=args.contents,
+        attachments=args.attachments,
+    )

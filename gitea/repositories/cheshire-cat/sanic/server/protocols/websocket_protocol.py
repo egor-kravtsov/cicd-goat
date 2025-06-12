@@ -112,12 +112,7 @@ class WebSocketProtocol(HttpProtocol):
                 # but ServerConnection needs a list
                 subprotocols = cast(
                     Optional[Sequence[Subprotocol]],
-                    list(
-                        [
-                            Subprotocol(subprotocol)
-                            for subprotocol in subprotocols
-                        ]
-                    ),
+                    list([Subprotocol(subprotocol) for subprotocol in subprotocols]),
                 )
             ws_conn = ServerConnection(
                 max_size=self.websocket_max_size,
@@ -155,8 +150,7 @@ class WebSocketProtocol(HttpProtocol):
         )
         loop = (
             request.transport.loop
-            if hasattr(request, "transport")
-            and hasattr(request.transport, "loop")
+            if hasattr(request, "transport") and hasattr(request.transport, "loop")
             else None
         )
         await self.websocket.connection_made(self, loop=loop)

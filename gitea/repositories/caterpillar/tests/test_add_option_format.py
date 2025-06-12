@@ -62,7 +62,9 @@ def test_invalid_format(writer, format):
         logger.add(writer, format=format)
 
 
-@pytest.mark.parametrize("format", ["<red>", "</red>", "</level><level>", "</>", "<foobar>"])
+@pytest.mark.parametrize(
+    "format", ["<red>", "</red>", "</level><level>", "</>", "<foobar>"]
+)
 def test_invalid_markups(writer, format):
     with pytest.raises(ValueError, match=r"Invalid format"):
         logger.add(writer, format=format)
@@ -74,7 +76,9 @@ def test_markup_in_field(writer, colorize):
         def __format__(self, spec):
             return spec
 
-    logger.add(writer, format="{extra[f]:</>} {extra[f]: <blue> } {message}", colorize=colorize)
+    logger.add(
+        writer, format="{extra[f]:</>} {extra[f]: <blue> } {message}", colorize=colorize
+    )
     logger.bind(f=F()).info("Test")
 
     assert writer.read() == "</>  <blue>  Test\n"

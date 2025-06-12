@@ -36,7 +36,8 @@ def test_add_level(writer):
 
 
 @pytest.mark.parametrize(
-    "colorize, expected", [(False, "foo | 10 | a"), (True, parse("<red>foo | 10 | a</red>"))]
+    "colorize, expected",
+    [(False, "foo | 10 | a"), (True, parse("<red>foo | 10 | a</red>"))],
 )
 def test_add_level_after_add(writer, colorize, expected):
     fmt = "<level>{level.name} | {level.no} | {message}</level>"
@@ -48,7 +49,9 @@ def test_add_level_after_add(writer, colorize, expected):
 
 def test_add_level_then_log_with_int_value(writer):
     logger.level("foo", 16)
-    logger.add(writer, level="foo", format="{level.name} {level.no} {message}", colorize=False)
+    logger.add(
+        writer, level="foo", format="{level.name} {level.no} {message}", colorize=False
+    )
 
     logger.log(16, "test")
 
@@ -65,7 +68,9 @@ def test_add_malicious_level(writer):
     logger.log(15, " A ")
     logger.log(name, " B ")
 
-    assert writer.read() == parse("Level 15 & 15 &  A \x1b[0m\nLevel 15 & 45 & <red> B </red>\n")
+    assert writer.read() == parse(
+        "Level 15 & 15 &  A \x1b[0m\nLevel 15 & 45 & <red> B </red>\n"
+    )
 
 
 def test_add_existing_level(writer):

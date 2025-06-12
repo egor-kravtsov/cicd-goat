@@ -35,8 +35,7 @@ except ImportError:  # noqa
 
 
 FALLBACK_TEXT = (
-    "The server encountered an internal error and "
-    "cannot complete your request."
+    "The server encountered an internal error and " "cannot complete your request."
 )
 FALLBACK_STATUS = 500
 
@@ -144,8 +143,7 @@ class HTMLRenderer(BaseRenderer):
         "</div>"
     )
     OBJECT_WRAPPER_HTML = (
-        "<div class=obj-header>{title}</div>"
-        "<dl class={obj_type}>{display_html}</dl>"
+        "<div class=obj-header>{title}</div>" "<dl class={obj_type}>{display_html}</dl>"
     )
     OBJECT_DISPLAY_HTML = "<dt>{key}</dt><dd><code>{value}</code></dd>"
     OUTPUT_HTML = (
@@ -205,8 +203,7 @@ class HTMLRenderer(BaseRenderer):
                 f"<h2>Traceback of {appname} " "(most recent call last):</h2>",
                 f"{traceback_html}",
                 "<div class=summary><p>",
-                f"<b>{name}: {value}</b> "
-                f"while handling path <code>{path}</code>",
+                f"<b>{name}: {value}</b> " f"while handling path <code>{path}</code>",
                 "</div>",
             ]
 
@@ -217,9 +214,7 @@ class HTMLRenderer(BaseRenderer):
 
         return "\n".join(lines)
 
-    def _generate_object_display(
-        self, obj: t.Dict[str, t.Any], descriptor: str
-    ) -> str:
+    def _generate_object_display(self, obj: t.Dict[str, t.Any], descriptor: str) -> str:
         display = "".join(
             self.OBJECT_DISPLAY_HTML.format(key=key, value=value)
             for key, value in obj.items()
@@ -232,9 +227,7 @@ class HTMLRenderer(BaseRenderer):
 
     def _format_exc(self, exc):
         frames = extract_tb(exc.__traceback__)
-        frame_html = "".join(
-            self.TRACEBACK_LINE_HTML.format(frame) for frame in frames
-        )
+        frame_html = "".join(self.TRACEBACK_LINE_HTML.format(frame) for frame in frames)
         return self.TRACEBACK_WRAPPER_HTML.format(
             exc_name=escape(exc.__class__.__name__),
             exc_value=escape(exc),
@@ -286,8 +279,7 @@ class TextRenderer(BaseRenderer):
             lines += [
                 f"{self.exception.__class__.__name__}: {self.exception} while "
                 f"handling path {self.request.path}",
-                f"Traceback of {self.request.app.name} "
-                "(most recent call last):\n",
+                f"Traceback of {self.request.app.name} " "(most recent call last):\n",
             ]
 
             while exc_value:
@@ -399,9 +391,7 @@ RENDERERS_BY_CONTENT_TYPE = {
     "multipart/form-data": HTMLRenderer,
     "text/html": HTMLRenderer,
 }
-CONTENT_TYPE_BY_RENDERERS = {
-    v: k for k, v in RENDERERS_BY_CONTENT_TYPE.items()
-}
+CONTENT_TYPE_BY_RENDERERS = {v: k for k, v in RENDERERS_BY_CONTENT_TYPE.items()}
 
 RESPONSE_MAPPING = {
     "empty": "html",
@@ -452,9 +442,7 @@ def exception_response(
                 except AttributeError:
                     ...
 
-            content_type = request.headers.getone("content-type", "").split(
-                ";"
-            )[0]
+            content_type = request.headers.getone("content-type", "").split(";")[0]
 
             acceptable = request.accept
 

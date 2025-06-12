@@ -150,9 +150,16 @@ class FileSink:
         encoding=None,
         **kwargs
     ):
-        self.encoding = locale.getpreferredencoding(False) if encoding is None else encoding
+        self.encoding = (
+            locale.getpreferredencoding(False) if encoding is None else encoding
+        )
 
-        self._kwargs = {**kwargs, "mode": mode, "buffering": buffering, "encoding": self.encoding}
+        self._kwargs = {
+            **kwargs,
+            "mode": mode,
+            "buffering": buffering,
+            "encoding": self.encoding,
+        }
         self._path = str(path)
 
         self._glob_patterns = self._make_glob_patterns(self._path)
@@ -170,7 +177,9 @@ class FileSink:
         if self._file is None:
             self._initialize_file()
 
-        if self._rotation_function is not None and self._rotation_function(message, self._file):
+        if self._rotation_function is not None and self._rotation_function(
+            message, self._file
+        ):
             self._terminate_file(is_rotating=True)
 
         self._file.write(message)
@@ -235,7 +244,9 @@ class FileSink:
     def _make_glob_patterns(path):
         formatter = string.Formatter()
         tokens = formatter.parse(path)
-        escaped = "".join(glob.escape(text) + "*" * (name is not None) for text, name, *_ in tokens)
+        escaped = "".join(
+            glob.escape(text) + "*" * (name is not None) for text, name, *_ in tokens
+        )
 
         root, ext = os.path.splitext(escaped)
 
@@ -279,7 +290,8 @@ class FileSink:
             return rotation
         else:
             raise TypeError(
-                "Cannot infer rotation for objects of type: '%s'" % type(rotation).__name__
+                "Cannot infer rotation for objects of type: '%s'"
+                % type(rotation).__name__
             )
 
     @staticmethod
@@ -299,7 +311,8 @@ class FileSink:
             return retention
         else:
             raise TypeError(
-                "Cannot infer retention for objects of type: '%s'" % type(retention).__name__
+                "Cannot infer retention for objects of type: '%s'"
+                % type(retention).__name__
             )
 
     @staticmethod
@@ -312,45 +325,63 @@ class FileSink:
             if ext == "gz":
                 import gzip
 
-                compress = partial(Compression.copy_compress, opener=gzip.open, mode="wb")
+                compress = partial(
+                    Compression.copy_compress, opener=gzip.open, mode="wb"
+                )
             elif ext == "bz2":
                 import bz2
 
-                compress = partial(Compression.copy_compress, opener=bz2.open, mode="wb")
+                compress = partial(
+                    Compression.copy_compress, opener=bz2.open, mode="wb"
+                )
 
             elif ext == "xz":
                 import lzma
 
                 compress = partial(
-                    Compression.copy_compress, opener=lzma.open, mode="wb", format=lzma.FORMAT_XZ
+                    Compression.copy_compress,
+                    opener=lzma.open,
+                    mode="wb",
+                    format=lzma.FORMAT_XZ,
                 )
 
             elif ext == "lzma":
                 import lzma
 
                 compress = partial(
-                    Compression.copy_compress, opener=lzma.open, mode="wb", format=lzma.FORMAT_ALONE
+                    Compression.copy_compress,
+                    opener=lzma.open,
+                    mode="wb",
+                    format=lzma.FORMAT_ALONE,
                 )
             elif ext == "tar":
                 import tarfile
 
-                compress = partial(Compression.add_compress, opener=tarfile.open, mode="w:")
+                compress = partial(
+                    Compression.add_compress, opener=tarfile.open, mode="w:"
+                )
             elif ext == "tar.gz":
                 import gzip
                 import tarfile
 
-                compress = partial(Compression.add_compress, opener=tarfile.open, mode="w:gz")
+                compress = partial(
+                    Compression.add_compress, opener=tarfile.open, mode="w:gz"
+                )
             elif ext == "tar.bz2":
                 import bz2
                 import tarfile
 
-                compress = partial(Compression.add_compress, opener=tarfile.open, mode="w:bz2")
+                compress = partial(
+                    Compression.add_compress, opener=tarfile.open, mode="w:bz2"
+                )
 
             elif ext == "tar.xz":
                 import lzma
                 import tarfile
 
-                compress = partial(Compression.add_compress, opener=tarfile.open, mode="w:xz")
+                compress = partial(
+                    Compression.add_compress, opener=tarfile.open, mode="w:xz"
+                )
             elif ext == "zip":
                 import zipfile
 
@@ -363,10 +394,13 @@ class FileSink:
             else:
                 raise ValueError("Invalid compression format: '%s'" % ext)
 
-            return partial(Compression.compression, ext="." + ext, compress_function=compress)
+            return partial(
+                Compression.compression, ext="." + ext, compress_function=compress
+            )
         elif callable(compression):
             return compression
         else:
             raise TypeError(
-                "Cannot infer compression for objects of type: '%s'" % type(compression).__name__
+                "Cannot infer compression for objects of type: '%s'"
+                % type(compression).__name__
             )

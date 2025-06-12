@@ -187,16 +187,13 @@ class SSLTransport:
     @overload
     def getpeercert(
         self, binary_form: "Literal[False]" = ...
-    ) -> Optional["_TYPE_PEER_CERT_RET_DICT"]:
-        ...
+    ) -> Optional["_TYPE_PEER_CERT_RET_DICT"]: ...
 
     @overload
-    def getpeercert(self, binary_form: "Literal[True]") -> Optional[bytes]:
-        ...
+    def getpeercert(self, binary_form: "Literal[True]") -> Optional[bytes]: ...
 
     @overload
-    def getpeercert(self, binary_form: bool) -> "_TYPE_PEER_CERT_RET":
-        ...
+    def getpeercert(self, binary_form: bool) -> "_TYPE_PEER_CERT_RET": ...
 
     def getpeercert(
         self, binary_form: bool = False
@@ -243,13 +240,11 @@ class SSLTransport:
 
     # func is sslobj.do_handshake or sslobj.unwrap
     @overload
-    def _ssl_io_loop(self, func: Callable[[], None]) -> None:
-        ...
+    def _ssl_io_loop(self, func: Callable[[], None]) -> None: ...
 
     # func is sslobj.write, arg1 is data
     @overload
-    def _ssl_io_loop(self, func: Callable[[bytes], int], arg1: bytes) -> int:
-        ...
+    def _ssl_io_loop(self, func: Callable[[bytes], int], arg1: bytes) -> int: ...
 
     # func is sslobj.read, arg1 is len, arg2 is buffer
     @overload
@@ -258,8 +253,7 @@ class SSLTransport:
         func: Callable[[int, Optional[bytearray]], bytes],
         arg1: int,
         arg2: Optional[bytearray],
-    ) -> bytes:
-        ...
+    ) -> bytes: ...
 
     def _ssl_io_loop(
         self,

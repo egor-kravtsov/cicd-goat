@@ -10,7 +10,7 @@ from sanic import Sanic
 from sanic.response import json
 from sanic.request import Request
 
-log = logging.getLogger('logdna')
+log = logging.getLogger("logdna")
 log.setLevel(logging.INFO)
 
 
@@ -30,7 +30,7 @@ logdna_options = {
     "index_meta": True,
     "hostname": node(),
     "ip": get_my_ip_address(),
-    "mac": get_mac_address()
+    "mac": get_mac_address(),
 }
 
 logdna_handler = LogDNAHandler(getenv("LOGDNA_API_KEY"), options=logdna_options)
@@ -49,13 +49,8 @@ def log_request(request: Request):
 
 @app.route("/")
 def default(request):
-    return json({
-        "response": "I was here"
-    })
+    return json({"response": "I was here"})
 
 
 if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=getenv("PORT", 8080)
-    )
+    app.run(host="0.0.0.0", port=getenv("PORT", 8080))

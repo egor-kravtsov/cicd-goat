@@ -10,8 +10,7 @@ class BaseScheme(ABC):
         self.app = app
 
     @abstractmethod
-    def run(self, method, module_globals) -> None:
-        ...
+    def run(self, method, module_globals) -> None: ...
 
     def __init_subclass__(cls):
         BaseScheme._registry.add(cls)

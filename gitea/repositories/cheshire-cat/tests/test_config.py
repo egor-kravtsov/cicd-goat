@@ -300,14 +300,10 @@ async def test_config_access_log_passing_in_create_server(app):
     async def _request(sanic, loop):
         app.stop()
 
-    await app.create_server(
-        port=1341, access_log=False, return_asyncio_server=True
-    )
+    await app.create_server(port=1341, access_log=False, return_asyncio_server=True)
     assert app.config.ACCESS_LOG is False
 
-    await app.create_server(
-        port=1342, access_log=True, return_asyncio_server=True
-    )
+    await app.create_server(port=1342, access_log=True, return_asyncio_server=True)
     assert app.config.ACCESS_LOG is True
 
 
@@ -328,9 +324,7 @@ def test_config_rewrite_keep_alive():
 
 _test_setting_as_dict = {"TEST_SETTING_VALUE": 1}
 _test_setting_as_class = type("C", (), {"TEST_SETTING_VALUE": 1})
-_test_setting_as_module = str(
-    Path(__file__).parent / "static/app_test_config.py"
-)
+_test_setting_as_module = str(Path(__file__).parent / "static/app_test_config.py")
 
 
 @pytest.mark.parametrize(

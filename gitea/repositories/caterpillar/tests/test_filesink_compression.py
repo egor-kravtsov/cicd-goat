@@ -11,7 +11,8 @@ from loguru import logger
 
 
 @pytest.mark.parametrize(
-    "compression", ["gz", "bz2", "zip", "xz", "lzma", "tar", "tar.gz", "tar.bz2", "tar.xz"]
+    "compression",
+    ["gz", "bz2", "zip", "xz", "lzma", "tar", "tar.gz", "tar.bz2", "tar.xz"],
 )
 def test_compression_ext(tmpdir, compression):
     i = logger.add(str(tmpdir.join("file.log")), compression=compression)
@@ -35,7 +36,11 @@ def test_compression_function(tmpdir):
 @pytest.mark.parametrize("mode", ["a", "a+", "w", "x"])
 def test_compression_at_rotation(tmpdir, mode):
     logger.add(
-        str(tmpdir.join("file.log")), format="{message}", rotation=0, compression="gz", mode=mode
+        str(tmpdir.join("file.log")),
+        format="{message}",
+        rotation=0,
+        compression="gz",
+        mode=mode,
     )
     logger.debug("After compression")
 
@@ -43,7 +48,9 @@ def test_compression_at_rotation(tmpdir, mode):
 
     assert len(files) == 2
     assert files[0].fnmatch(
-        "file.{0}-{1}-{1}_{1}-{1}-{1}_{2}.log.gz".format("[0-9]" * 4, "[0-9]" * 2, "[0-9]" * 6)
+        "file.{0}-{1}-{1}_{1}-{1}-{1}_{2}.log.gz".format(
+            "[0-9]" * 4, "[0-9]" * 2, "[0-9]" * 6
+        )
     )
     assert files[1].basename == "file.log"
     assert files[1].read() == "After compression\n"
@@ -61,7 +68,9 @@ def test_compression_at_remove_without_rotation(tmpdir, mode):
 
 @pytest.mark.parametrize("mode", ["a", "a+", "w", "x"])
 def test_no_compression_at_remove_with_rotation(tmpdir, mode):
-    i = logger.add(str(tmpdir.join("test.log")), compression="gz", rotation="100 MB", mode=mode)
+    i = logger.add(
+        str(tmpdir.join("test.log")), compression="gz", rotation="100 MB", mode=mode
+    )
     logger.debug("test")
     logger.remove(i)
 
@@ -97,7 +106,9 @@ def test_renaming_compression_dest_exists(monkeypatch, monkeypatch_date, tmpdir)
     monkeypatch.setattr(loguru._file_sink, "get_ctime", lambda _: timestamp)
 
     for i in range(4):
-        logger.add(str(tmpdir.join("rotate.log")), compression=".tar.gz", format="{message}")
+        logger.add(
+            str(tmpdir.join("rotate.log")), compression=".tar.gz", format="{message}"
+        )
         logger.info(str(i))
         logger.remove()
 
@@ -108,14 +119,20 @@ def test_renaming_compression_dest_exists(monkeypatch, monkeypatch_date, tmpdir)
     assert tmpdir.join("rotate.2019-01-02_03-04-05_000006.3.log.tar.gz").check(exists=1)
 
 
-def test_renaming_compression_dest_exists_with_time(monkeypatch, monkeypatch_date, tmpdir):
+def test_renaming_compression_dest_exists_with_time(
+    monkeypatch, monkeypatch_date, tmpdir
+):
     date = (2019, 1, 2, 3, 4, 5, 6)
     timestamp = datetime.datetime(*date).timestamp()
     monkeypatch_date(*date)
     monkeypatch.setattr(loguru._file_sink, "get_ctime", lambda _: timestamp)
 
     for i in range(4):
-        logger.add(str(tmpdir.join("rotate.{time}.log")), compression=".tar.gz", format="{message}")
+        logger.add(
+            str(tmpdir.join("rotate.{time}.log")),
+            compression=".tar.gz",
+            format="{message}",
+        )
         logger.info(str(i))
         logger.remove()
 
@@ -143,7 +160,9 @@ def test_compression_use_renamed_file_after_rotation(tmpdir):
         return message.record["extra"].get("rotate", False)
 
     filepath = tmpdir.join("test.log")
-    logger.add(str(filepath), format="{message}", compression=compression, rotation=rotation)
+    logger.add(
+        str(filepath), format="{message}", compression=compression, rotation=rotation
+    )
 
     logger.info("Before")
     logger.bind(rotate=True).info("Rotation")
@@ -170,7 +189,10 @@ def test_threaded_compression_after_rotation(tmpdir):
         return message.record["extra"].get("rotate", False)
 
     logger.add(
-        str(tmpdir.join("test.log")), format="{message}", compression=compression, rotation=rotation
+        str(tmpdir.join("test.log")),
+        format="{message}",
+        compression=compression,
+        rotation=rotation,
     )
 
     logger.info("Before")

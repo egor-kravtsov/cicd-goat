@@ -10,16 +10,16 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 @click.command()
-@click.argument('path', type=str)
-@click.option('-u', '--username', 'admin_username', help='Admin username.')
-@click.option('-p', '--password', 'admin_password', help='Admin password.')
+@click.argument("path", type=str)
+@click.option("-u", "--username", "admin_username", help="Admin username.")
+@click.option("-p", "--password", "admin_password", help="Admin password.")
 def giteacasc(path, admin_username, admin_password):
-    with open(path, 'r') as y:
+    with open(path, "r") as y:
         config = yaml.safe_load(y.read())
     project_dir = os.path.dirname(os.path.abspath(__file__))
-    os.environ['GIT_ASKPASS'] = os.path.join(project_dir, 'askpass.py')
-    os.environ['GIT_USERNAME'] = admin_username
-    os.environ['GIT_PASSWORD'] = admin_password
+    os.environ["GIT_ASKPASS"] = os.path.join(project_dir, "askpass.py")
+    os.environ["GIT_USERNAME"] = admin_username
+    os.environ["GIT_PASSWORD"] = admin_password
     g = Gitea(admin_username, admin_password)
     if Gitea.YAML_USERS in config:
         for username in config[Gitea.YAML_USERS]:
@@ -27,5 +27,3 @@ def giteacasc(path, admin_username, admin_password):
     if Gitea.YAML_ORGS in config:
         for org_name in config[Gitea.YAML_ORGS]:
             g.create_org(admin_username, org_name, **config[Gitea.YAML_ORGS][org_name])
-
-

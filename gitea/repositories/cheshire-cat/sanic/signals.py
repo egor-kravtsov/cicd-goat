@@ -60,16 +60,13 @@ RESERVED_NAMESPACES = {
 }
 
 
-def _blank():
-    ...
+def _blank(): ...
 
 
-class Signal(Route):
-    ...
+class Signal(Route): ...
 
 
-class SignalGroup(RouteGroup):
-    ...
+class SignalGroup(RouteGroup): ...
 
 
 class SignalRouter(BaseRouter):
@@ -222,11 +219,7 @@ class SignalRouter(BaseRouter):
 
     def _build_event_parts(self, event: str) -> Tuple[str, str, str]:
         parts = path_to_parts(event, self.delimiter)
-        if (
-            len(parts) != 3
-            or parts[0].startswith("<")
-            or parts[1].startswith("<")
-        ):
+        if len(parts) != 3 or parts[0].startswith("<") or parts[1].startswith("<"):
             raise InvalidSignal("Invalid signal event: %s" % event)
 
         if (
@@ -234,7 +227,5 @@ class SignalRouter(BaseRouter):
             and event not in RESERVED_NAMESPACES[parts[0]]
             and not (parts[2].startswith("<") and parts[2].endswith(">"))
         ):
-            raise InvalidSignal(
-                "Cannot declare reserved signal event: %s" % event
-            )
+            raise InvalidSignal("Cannot declare reserved signal event: %s" % event)
         return parts

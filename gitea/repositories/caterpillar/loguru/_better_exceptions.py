@@ -139,8 +139,12 @@ class ExceptionFormatter:
     def _get_lib_dirs():
         schemes = sysconfig.get_scheme_names()
         names = ["stdlib", "platstdlib", "platlib", "purelib"]
-        paths = {sysconfig.get_path(name, scheme) for scheme in schemes for name in names}
-        return [os.path.abspath(path).lower() + os.sep for path in paths if path in sys.path]
+        paths = {
+            sysconfig.get_path(name, scheme) for scheme in schemes for name in names
+        }
+        return [
+            os.path.abspath(path).lower() + os.sep for path in paths if path in sys.path
+        ]
 
     def _get_char(self, char, default):
         try:
@@ -213,7 +217,9 @@ class ExceptionFormatter:
                     lines.append(source)
                 if self._diagnose:
                     relevant_values = self._get_relevant_values(source, frame)
-                    values = self._format_relevant_values(list(relevant_values), colorize)
+                    values = self._format_relevant_values(
+                        list(relevant_values), colorize
+                    )
                     lines += list(values)
                 source = "\n    ".join(lines)
             frames.append((filename, lineno, function, source))
@@ -308,7 +314,9 @@ class ExceptionFormatter:
 
     def _format_locations(self, frames_lines, *, has_introduction):
         prepend_with_new_line = has_introduction
-        regex = r'^  File "(?P<file>.*?)", line (?P<line>[^,]+)(?:, in (?P<function>.*))?\n'
+        regex = (
+            r'^  File "(?P<file>.*?)", line (?P<line>[^,]+)(?:, in (?P<function>.*))?\n'
+        )
 
         for frame in frames_lines:
             match = re.match(regex, frame)
@@ -323,7 +331,11 @@ class ExceptionFormatter:
                 else:
                     pattern = '  File "{}", line {}\n'
 
-                if self._backtrace and function and function.endswith(self._catch_point_identifier):
+                if (
+                    self._backtrace
+                    and function
+                    and function.endswith(self._catch_point_identifier)
+                ):
                     function = function[: -len(self._catch_point_identifier)]
                     pattern = ">" + pattern[1:]
 
@@ -346,7 +358,9 @@ class ExceptionFormatter:
 
             yield frame
 
-    def _format_exception(self, value, tb, *, seen=None, is_first=False, from_decorator=False):
+    def _format_exception(
+        self, value, tb, *, seen=None, is_first=False, from_decorator=False
+    ):
         # Implemented from built-in traceback module: https://git.io/fhHKw
         exc_type, exc_value, exc_traceback = type(value), value, tb
 
@@ -375,7 +389,9 @@ class ExceptionFormatter:
                 and not exc_value.__suppress_context__
             ):
                 for text in self._format_exception(
-                    exc_value.__context__, exc_value.__context__.__traceback__, seen=seen
+                    exc_value.__context__,
+                    exc_value.__context__.__traceback__,
+                    seen=seen,
                 ):
                     yield text
                 context = "During handling of the above exception, another exception occurred:"
@@ -408,7 +424,11 @@ class ExceptionFormatter:
                 error_message = self._theme["exception_type"].format(error_message)
 
         if self._diagnose and frames:
-            if issubclass(exc_type, AssertionError) and not str(exc_value) and final_source:
+            if (
+                issubclass(exc_type, AssertionError)
+                and not str(exc_value)
+                and final_source
+            ):
                 if self._colorize:
                     final_source = self._syntax_highlighter.highlight(final_source)
                 error_message += ": " + final_source
@@ -421,7 +441,9 @@ class ExceptionFormatter:
         has_introduction = bool(frames)
 
         if self._colorize or self._backtrace or self._diagnose:
-            frames_lines = self._format_locations(frames_lines, has_introduction=has_introduction)
+            frames_lines = self._format_locations(
+                frames_lines, has_introduction=has_introduction
+            )
 
         if is_first:
             yield self._prefix
@@ -435,4 +457,6 @@ class ExceptionFormatter:
         yield "".join(frames_lines)
 
     def format_exception(self, type_, value, tb, *, from_decorator=False):
-        yield from self._format_exception(value, tb, is_first=True, from_decorator=from_decorator)
+        yield from self._format_exception(
+            value, tb, is_first=True, from_decorator=from_decorator
+        )

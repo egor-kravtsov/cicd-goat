@@ -60,11 +60,11 @@ def test_parse_without_group(fileobj):
 
 def test_parse_bytes():
     with io.BytesIO(b"Testing bytes!") as fileobj:
-        result, *_ = list(logger.parse(fileobj, br"(?P<ponct>[?!:])"))
+        result, *_ = list(logger.parse(fileobj, rb"(?P<ponct>[?!:])"))
     assert result == dict(ponct=b"!")
 
 
-@pytest.mark.parametrize("chunk", [-1, 1, 2 ** 16])
+@pytest.mark.parametrize("chunk", [-1, 1, 2**16])
 def test_chunk(fileobj, chunk):
     result, *_ = list(logger.parse(fileobj, r"(?P<a>[ABC]+)", chunk=chunk))
     assert result == dict(a="ABC")
@@ -90,7 +90,9 @@ def test_cast_dict(tmpdir):
     file = tmpdir.join("test.log")
     file.write("[123] [1.1] [2017-03-29 11:11:11]\n")
     regex = r"\[(?P<num>.*)\] \[(?P<val>.*)\] \[(?P<date>.*)\]"
-    caster = dict(num=int, val=float, date=lambda d: datetime.strptime(d, "%Y-%m-%d %H:%M:%S"))
+    caster = dict(
+        num=int, val=float, date=lambda d: datetime.strptime(d, "%Y-%m-%d %H:%M:%S")
+    )
     result = next(logger.parse(str(file), regex, cast=caster))
     assert result == dict(num=123, val=1.1, date=datetime(2017, 3, 29, 11, 11, 11))
 

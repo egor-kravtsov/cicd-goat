@@ -4,7 +4,11 @@ from loguru import logger
 
 logger.remove()
 logger.add(
-    sys.stderr, format="{level.name} | {level.no}", diagnose=False, backtrace=False, colorize=False
+    sys.stderr,
+    format="{level.name} | {level.no}",
+    diagnose=False,
+    backtrace=False,
+    colorize=False,
 )
 
 

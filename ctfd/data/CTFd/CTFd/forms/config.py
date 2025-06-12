@@ -93,13 +93,15 @@ class LegalSettingsForm(BaseForm):
         description="External URL to a Terms of Service document hosted elsewhere",
     )
     tos_text = TextAreaField(
-        "Terms of Service", description="Text shown on the Terms of Service page",
+        "Terms of Service",
+        description="Text shown on the Terms of Service page",
     )
     privacy_url = URLField(
         "Privacy Policy URL",
         description="External URL to a Privacy Policy document hosted elsewhere",
     )
     privacy_text = TextAreaField(
-        "Privacy Policy", description="Text shown on the Privacy Policy page",
+        "Privacy Policy",
+        description="Text shown on the Privacy Policy page",
     )
     submit = SubmitField("Update")

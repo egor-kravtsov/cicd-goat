@@ -25,8 +25,7 @@ class MOTD(ABC):
         self.value_width = 0
 
     @abstractmethod
-    def display(self):
-        ...  # noqa
+    def display(self): ...  # noqa
 
     @classmethod
     def output(
@@ -85,9 +84,7 @@ class MOTDTTY(MOTD):
     def display(self):
         version = f"Sanic v{__version__}".center(self.centering_length)
         running = (
-            f"Goin' Fast @ {self.serve_location}"
-            if self.serve_location
-            else ""
+            f"Goin' Fast @ {self.serve_location}" if self.serve_location else ""
         ).center(self.centering_length)
         length = len(version) + 2 - self.logo_line_length
         first_filler = "─" * (self.logo_line_length - 1)

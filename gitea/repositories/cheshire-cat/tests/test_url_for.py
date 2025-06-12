@@ -16,10 +16,7 @@ def test_routes_with_host(app):
     assert app.url_for("hostindex") == "/"
     assert app.url_for("hostpath") == "/path"
     assert app.url_for("hostindex", _external=True) == "http://example.com/"
-    assert (
-        app.url_for("hostpath", _external=True)
-        == "http://path.example.com/path"
-    )
+    assert app.url_for("hostpath", _external=True) == "http://path.example.com/path"
 
 
 def test_routes_with_multiple_hosts(app):
@@ -28,9 +25,7 @@ def test_routes_with_multiple_hosts(app):
         pass
 
     assert app.url_for("hostindex") == "/"
-    assert (
-        app.url_for("hostindex", _host="example.com") == "http://example.com/"
-    )
+    assert app.url_for("hostindex", _host="example.com") == "http://example.com/"
 
     with pytest.raises(ValueError) as e:
         assert app.url_for("hostindex", _external=True)
@@ -57,8 +52,7 @@ def test_websocket_bp_route_name(app, name, expected):
     bp = Blueprint("test_bp", url_prefix="/bp")
 
     @bp.get("/main")
-    async def main(request):
-        ...
+    async def main(request): ...
 
     @bp.websocket("/route")
     async def test_route(request, ws):
@@ -97,8 +91,7 @@ def test_websocket_bp_route_name(app, name, expected):
 )
 def test_trailing_slash_url_for(app, path, strict, expected):
     @app.route(path, strict_slashes=strict)
-    def handler(*_):
-        ...
+    def handler(*_): ...
 
     url = app.url_for("handler")
     assert url == expected

@@ -22,8 +22,10 @@ def test_parse(message_name, expected_params):
     assert method_name == "call"
     assert params == expected_params
 
+
 @pytest.mark.parametrize(
-    ["event_names"], [([],), (["foo"],), (["foo", "bar"],)],
+    ["event_names"],
+    [([],), (["foo"],), (["foo", "bar"],)],
 )
 def test_listen(event_names):
     listen(*event_names)(lambda: None)._meld_event_names == event_names

@@ -51,10 +51,22 @@ def test_foreground_colors(text, expected):
     "text, expected",
     [
         ("<b>1</b><d>2</d>", S.BRIGHT + "1" + S.RESET_ALL + S.DIM + "2" + S.RESET_ALL),
-        ("<b>1</b>2<d>3</d>", S.BRIGHT + "1" + S.RESET_ALL + "2" + S.DIM + "3" + S.RESET_ALL),
+        (
+            "<b>1</b>2<d>3</d>",
+            S.BRIGHT + "1" + S.RESET_ALL + "2" + S.DIM + "3" + S.RESET_ALL,
+        ),
         (
             "0<b>1<d>2</d>3</b>4",
-            "0" + S.BRIGHT + "1" + S.DIM + "2" + S.RESET_ALL + S.BRIGHT + "3" + S.RESET_ALL + "4",
+            "0"
+            + S.BRIGHT
+            + "1"
+            + S.DIM
+            + "2"
+            + S.RESET_ALL
+            + S.BRIGHT
+            + "3"
+            + S.RESET_ALL
+            + "4",
         ),
         (
             "<d>0<b>1<d>2</d>3</b>4</d>",
@@ -164,7 +176,9 @@ def test_unbalanced_error(text, strip):
         parse(text, strip=strip)
 
 
-@pytest.mark.parametrize("text", ["<b>", "<Y><b></b>", "<b><b></b>", "<fg red>1<fg red>"])
+@pytest.mark.parametrize(
+    "text", ["<b>", "<Y><b></b>", "<b><b></b>", "<fg red>1<fg red>"]
+)
 @pytest.mark.parametrize("strip", [True, False])
 def test_unclosed_error(text, strip):
     with pytest.raises(ValueError):

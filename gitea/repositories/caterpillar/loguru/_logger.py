@@ -72,6 +72,7 @@
 .. _Formatting directives: https://docs.python.org/3/library/string.html#format-string-syntax
 .. _reentrant: https://en.wikipedia.org/wiki/Reentrancy_(computing)
 """
+
 import asyncio
 import builtins
 import contextlib
@@ -96,7 +97,13 @@ from ._file_sink import FileSink
 from ._get_frame import get_frame
 from ._handler import Handler
 from ._locks_machinery import create_logger_lock
-from ._recattrs import RecordException, RecordFile, RecordLevel, RecordProcess, RecordThread
+from ._recattrs import (
+    RecordException,
+    RecordFile,
+    RecordLevel,
+    RecordProcess,
+    RecordThread,
+)
 from ._simple_sinks import AsyncSink, CallableSink, StandardSink, StreamSink
 
 if sys.version_info >= (3, 6):
@@ -217,9 +224,21 @@ class Logger:
     You should not instantiate a |Logger| by yourself, use ``from loguru import logger`` instead.
     """
 
-    def __init__(self, core, exception, depth, record, lazy, colors, raw, capture, patcher, extra):
+    def __init__(
+        self, core, exception, depth, record, lazy, colors, raw, capture, patcher, extra
+    ):
         self._core = core
-        self._options = (exception, depth, record, lazy, colors, raw, capture, patcher, extra)
+        self._options = (
+            exception,
+            depth,
+            record,
+            lazy,
+            colors,
+            raw,
+            capture,
+            patcher,
+            extra,
+        )
 
     def __repr__(self):
         return "<loguru.logger handlers=%r>" % list(self._core.handlers.values())
@@ -792,7 +811,9 @@ class Logger:
             encoding = getattr(sink, "encoding", None)
             terminator = ""
             exception_prefix = "\n"
-        elif iscoroutinefunction(sink) or iscoroutinefunction(getattr(sink, "__call__", None)):
+        elif iscoroutinefunction(sink) or iscoroutinefunction(
+            getattr(sink, "__call__", None)
+        ):
             name = getattr(sink, "__name__", None) or repr(sink)
 
             if colorize is None:
@@ -827,7 +848,9 @@ class Logger:
             raise TypeError("Cannot log to objects of type '%s'" % type(sink).__name__)
 
         if kwargs:
-            raise TypeError("add() got an unexpected keyword argument '%s'" % next(iter(kwargs)))
+            raise TypeError(
+                "add() got an unexpected keyword argument '%s'" % next(iter(kwargs))
+            )
 
         if filter is None:
             filter_func = None
@@ -836,14 +859,17 @@ class Logger:
         elif isinstance(filter, str):
             parent = filter + "."
             length = len(parent)
-            filter_func = functools.partial(_filters.filter_by_name, parent=parent, length=length)
+            filter_func = functools.partial(
+                _filters.filter_by_name, parent=parent, length=length
+            )
         elif isinstance(filter, dict):
             level_per_module = {}
             for module, level_ in filter.items():
                 if module is not None and not isinstance(module, str):
                     raise TypeError(
                         "The filter dict contains an invalid module, "
-                        "it should be a string (or None), not: '%s'" % type(module).__name__
+                        "it should be a string (or None), not: '%s'"
+                        % type(module).__name__
                     )
                 if level_ is False:
                     levelno_ = False
@@ -868,7 +894,8 @@ class Logger:
                 if levelno_ < 0:
                     raise ValueError(
                         "The filter dict contains a module '%s' associated to an invalid level, "
-                        "it should be a positive integer, not: '%d'" % (module, levelno_)
+                        "it should be a positive integer, not: '%d'"
+                        % (module, levelno_)
                     )
                 level_per_module[module] = levelno_
             filter_func = functools.partial(
@@ -900,12 +927,15 @@ class Logger:
 
         if levelno < 0:
             raise ValueError(
-                "Invalid level value, it should be a positive integer, not: %d" % levelno
+                "Invalid level value, it should be a positive integer, not: %d"
+                % levelno
             )
 
         if isinstance(format, str):
             try:
-                formatter = Colorizer.prepare_format(format + terminator + "{exception}")
+                formatter = Colorizer.prepare_format(
+                    format + terminator + "{exception}"
+                )
             except ValueError as e:
                 raise ValueError(
                     "Invalid format, color markups could not be parsed correctly"
@@ -995,7 +1025,9 @@ class Logger:
             handlers = self._core.handlers.copy()
 
             if handler_id is not None and handler_id not in handlers:
-                raise ValueError("There is no existing handler with id %d" % handler_id) from None
+                raise ValueError(
+                    "There is no existing handler with id %d" % handler_id
+                ) from None
 
             if handler_id is None:
                 handler_ids = list(handlers.keys())
@@ -1192,7 +1224,15 @@ class Logger:
 
                 catch_options = [(type_, value, traceback_), depth, True] + options
                 level_id, static_level_no = self._dynamic_level(level)
-                self._log(level_id, static_level_no, from_decorator, catch_options, message, (), {})
+                self._log(
+                    level_id,
+                    static_level_no,
+                    from_decorator,
+                    catch_options,
+                    message,
+                    (),
+                    {},
+                )
 
                 if onerror is not None:
                     onerror(value)
@@ -1325,7 +1365,9 @@ class Logger:
             )
 
         args = self._options[-2:]
-        return Logger(self._core, exception, depth, record, lazy, colors, raw, capture, *args)
+        return Logger(
+            self._core, exception, depth, record, lazy, colors, raw, capture, *args
+        )
 
     def bind(__self, **kwargs):
         """Bind attributes to the ``extra`` dict of each logged message record.
@@ -1509,7 +1551,8 @@ class Logger:
         """
         if not isinstance(name, str):
             raise TypeError(
-                "Invalid level name, it should be a string, not: '%s'" % type(name).__name__
+                "Invalid level name, it should be a string, not: '%s'"
+                % type(name).__name__
             )
 
         if no is color is icon is None:
@@ -1527,7 +1570,9 @@ class Logger:
             else:
                 old_color, old_icon = "", " "
         elif no is not None:
-            raise TypeError("Level '%s' already exists, you can't update its severity no" % name)
+            raise TypeError(
+                "Level '%s' already exists, you can't update its severity no" % name
+            )
         else:
             _, no, old_color, old_icon = self.level(name)
 
@@ -1539,11 +1584,14 @@ class Logger:
 
         if not isinstance(no, int):
             raise TypeError(
-                "Invalid level no, it should be an integer, not: '%s'" % type(no).__name__
+                "Invalid level no, it should be an integer, not: '%s'"
+                % type(no).__name__
             )
 
         if no < 0:
-            raise ValueError("Invalid level no, it should be a positive integer, not: %d" % no)
+            raise ValueError(
+                "Invalid level no, it should be a positive integer, not: %d" % no
+            )
 
         ansi = Colorizer.ansify(color)
         level = Level(name, no, color, icon)
@@ -1604,7 +1652,9 @@ class Logger:
         """
         self._change_activation(name, True)
 
-    def configure(self, *, handlers=None, levels=None, extra=None, patcher=None, activation=None):
+    def configure(
+        self, *, handlers=None, levels=None, extra=None, patcher=None, activation=None
+    ):
         """Configure the core logger.
 
         It should be noted that ``extra`` values set using this function are available across all
@@ -1694,7 +1744,8 @@ class Logger:
     def _change_activation(self, name, status):
         if not (name is None or isinstance(name, str)):
             raise TypeError(
-                "Invalid name, it should be a string (or None), not: '%s'" % type(name).__name__
+                "Invalid name, it should be a string (or None), not: '%s'"
+                % type(name).__name__
             )
 
         with self._core.lock:
@@ -1715,7 +1766,9 @@ class Logger:
                 (n, s) for n, s in self._core.activation_list if n[: len(name)] != name
             ]
 
-            parent_status = next((s for n, s in activation_list if name[: len(n)] == n), None)
+            parent_status = next(
+                (s for n, s in activation_list if name[: len(n)] == n), None
+            )
             if parent_status != status and not (name == "" and status is True):
                 activation_list.append((name, status))
 
@@ -1732,7 +1785,7 @@ class Logger:
             self._core.enabled = enabled
 
     @staticmethod
-    def parse(file, pattern, *, cast={}, chunk=2 ** 16):
+    def parse(file, pattern, *, cast={}, chunk=2**16):
         """Parse raw logs and extract each entry as a |dict|.
 
         The logging format has to be specified as the regex ``pattern``, it will then be
@@ -1802,7 +1855,8 @@ class Logger:
             cast_function = cast
         else:
             raise TypeError(
-                "Invalid cast, it should be a function or a dict, not: '%s'" % type(cast).__name__
+                "Invalid cast, it should be a function or a dict, not: '%s'"
+                % type(cast).__name__
             )
 
         try:
@@ -1841,7 +1895,9 @@ class Logger:
                 buffer = buffer[end:]
                 yield from matches[:-1]
 
-    def _log(self, level_id, static_level_no, from_decorator, options, message, args, kwargs):
+    def _log(
+        self, level_id, static_level_no, from_decorator, options, message, args, kwargs
+    ):
         core = self._core
 
         if not core.handlers:
@@ -1900,7 +1956,11 @@ class Logger:
 
         if exception:
             if isinstance(exception, BaseException):
-                type_, value, traceback = (type(exception), exception, exception.__traceback__)
+                type_, value, traceback = (
+                    type(exception),
+                    exception,
+                    exception.__traceback__,
+                )
             elif isinstance(exception, tuple):
                 type_, value, traceback = exception
             else:
@@ -1997,7 +2057,9 @@ class Logger:
     def log(__self, __level, __message, *args, **kwargs):
         r"""Log ``message.format(*args, **kwargs)`` with severity ``level``."""
         level_id, static_level_no = __self._dynamic_level(__level)
-        __self._log(level_id, static_level_no, False, __self._options, __message, args, kwargs)
+        __self._log(
+            level_id, static_level_no, False, __self._options, __message, args, kwargs
+        )
 
     @staticmethod
     @functools.lru_cache(maxsize=32)
@@ -2009,12 +2071,14 @@ class Logger:
         if isinstance(level, int):
             if level < 0:
                 raise ValueError(
-                    "Invalid level value, it should be a positive integer, not: %d" % level
+                    "Invalid level value, it should be a positive integer, not: %d"
+                    % level
                 )
             return (None, level)
 
         raise TypeError(
-            "Invalid level, it should be an integer or a string, not: '%s'" % type(level).__name__
+            "Invalid level, it should be an integer or a string, not: '%s'"
+            % type(level).__name__
         )
 
     def start(self, *args, **kwargs):
@@ -2027,7 +2091,8 @@ class Logger:
           confusing name.
         """
         warnings.warn(
-            "The 'start()' method is deprecated, please use 'add()' instead", DeprecationWarning
+            "The 'start()' method is deprecated, please use 'add()' instead",
+            DeprecationWarning,
         )
         return self.add(*args, **kwargs)
 
@@ -2041,6 +2106,7 @@ class Logger:
           confusing name.
         """
         warnings.warn(
-            "The 'stop()' method is deprecated, please use 'remove()' instead", DeprecationWarning
+            "The 'stop()' method is deprecated, please use 'remove()' instead",
+            DeprecationWarning,
         )
         return self.remove(*args, **kwargs)

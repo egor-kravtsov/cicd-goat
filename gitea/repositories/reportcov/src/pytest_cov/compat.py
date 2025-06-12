@@ -8,7 +8,7 @@ import pytest
 StringIO  # pyflakes, this is for re-export
 
 
-if hasattr(pytest, 'hookimpl'):
+if hasattr(pytest, "hookimpl"):
     hookwrapper = pytest.hookimpl(hookwrapper=True)
 else:
     hookwrapper = pytest.mark.hookwrapper
@@ -17,10 +17,10 @@ else:
 class SessionWrapper:
     def __init__(self, session):
         self._session = session
-        if hasattr(session, 'testsfailed'):
-            self._attr = 'testsfailed'
+        if hasattr(session, "testsfailed"):
+            self._attr = "testsfailed"
         else:
-            self._attr = '_testsfailed'
+            self._attr = "_testsfailed"
 
     @property
     def testsfailed(self):

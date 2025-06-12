@@ -57,7 +57,12 @@ def test_devnull(rep):
 @repetitions
 @pytest.mark.parametrize(
     "sink_from_path",
-    [str, pathlib.Path, lambda path: open(path, "a"), lambda path: pathlib.Path(path).open("a")],
+    [
+        str,
+        pathlib.Path,
+        lambda path: open(path, "a"),
+        lambda path: pathlib.Path(path).open("a"),
+    ],
 )
 def test_file_sink(rep, sink_from_path, tmpdir):
     file = tmpdir.join("test.log")
@@ -144,7 +149,11 @@ def test_flush(rep):
 def test_file_sink_ascii_encoding(tmpdir):
     file = tmpdir.join("test.log")
     logger.add(
-        str(file), encoding="ascii", format="{message}", errors="backslashreplace", catch=False
+        str(file),
+        encoding="ascii",
+        format="{message}",
+        errors="backslashreplace",
+        catch=False,
     )
     logger.info("天")
     logger.remove()
@@ -153,7 +162,9 @@ def test_file_sink_ascii_encoding(tmpdir):
 
 def test_file_sink_utf8_encoding(tmpdir):
     file = tmpdir.join("test.log")
-    logger.add(str(file), encoding="utf8", format="{message}", errors="strict", catch=False)
+    logger.add(
+        str(file), encoding="utf8", format="{message}", errors="strict", catch=False
+    )
     logger.info("天")
     logger.remove()
     assert file.read_text("utf8") == "天\n"

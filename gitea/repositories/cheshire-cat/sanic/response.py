@@ -53,9 +53,7 @@ class BaseHTTPResponse:
     def _encode_body(self, data: Optional[AnyStr]):
         if data is None:
             return b""
-        return (
-            data.encode() if hasattr(data, "encode") else data  # type: ignore
-        )
+        return data.encode() if hasattr(data, "encode") else data  # type: ignore
 
     @property
     def cookies(self) -> CookieJar:
@@ -114,11 +112,7 @@ class BaseHTTPResponse:
             end_stream = True
         if end_stream and not data and self.stream.send is None:
             return
-        data = (
-            data.encode()  # type: ignore
-            if hasattr(data, "encode")
-            else data or b""
-        )
+        data = data.encode() if hasattr(data, "encode") else data or b""  # type: ignore
         await self.stream.send(data, end_stream=end_stream)
 
 
@@ -252,9 +246,7 @@ class HTTPResponse(BaseHTTPResponse):
         await self.eof()
 
 
-def empty(
-    status=204, headers: Optional[Dict[str, str]] = None
-) -> HTTPResponse:
+def empty(status=204, headers: Optional[Dict[str, str]] = None) -> HTTPResponse:
     """
     Returns an empty response to the client.
 
@@ -305,13 +297,9 @@ def text(
     :param content_type: the content type (string) of the response
     """
     if not isinstance(body, str):
-        raise TypeError(
-            f"Bad body type. Expected str, got {type(body).__name__})"
-        )
+        raise TypeError(f"Bad body type. Expected str, got {type(body).__name__})")
 
-    return HTTPResponse(
-        body, status=status, headers=headers, content_type=content_type
-    )
+    return HTTPResponse(body, status=status, headers=headers, content_type=content_type)
 
 
 def raw(
@@ -380,18 +368,16 @@ async def file(
     """
     headers = headers or {}
     if filename:
-        headers.setdefault(
-            "Content-Disposition", f'attachment; filename="{filename}"'
-        )
+        headers.setdefault("Content-Disposition", f'attachment; filename="{filename}"')
     filename = filename or path.split(location)[-1]
 
     async with await open_async(location, mode="rb") as f:
         if _range:
             await f.seek(_range.start)
             out_stream = await f.read(_range.size)
-            headers[
-                "Content-Range"
-            ] = f"bytes {_range.start}-{_range.end}/{_range.total}"
+            headers["Content-Range"] = (
+                f"bytes {_range.start}-{_range.end}/{_range.total}"
+            )
             status = 206
         else:
             out_stream = await f.read()
@@ -426,9 +412,7 @@ async def file_stream(
     """
     headers = headers or {}
     if filename:
-        headers.setdefault(
-            "Content-Disposition", f'attachment; filename="{filename}"'
-        )
+        headers.setdefault("Content-Disposition", f'attachment; filename="{filename}"')
     filename = filename or path.split(location)[-1]
     mime_type = mime_type or guess_type(filename)[0] or "text/plain"
     if _range:
@@ -523,6 +507,4 @@ def redirect(
     # According to RFC 7231, a relative URI is now permitted.
     headers["Location"] = safe_to
 
-    return HTTPResponse(
-        status=status, headers=headers, content_type=content_type
-    )
+    return HTTPResponse(status=status, headers=headers, content_type=content_type)

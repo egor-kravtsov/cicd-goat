@@ -62,5 +62,4 @@ class FutureSignal(NamedTuple):
     condition: Optional[Dict[str, str]]
 
 
-class FutureRegistry(set):
-    ...
+class FutureRegistry(set): ...

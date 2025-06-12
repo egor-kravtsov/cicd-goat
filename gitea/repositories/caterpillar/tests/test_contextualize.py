@@ -62,7 +62,9 @@ def test_contextualize_reset():
     assert output == ["INFO A\n", "DEBUG B\n", "WARNING C\n", "INFO D\n"]
 
 
-@pytest.mark.xfail(sys.version_info < (3, 5, 3), reason="ContextVar backport not supported")
+@pytest.mark.xfail(
+    sys.version_info < (3, 5, 3), reason="ContextVar backport not supported"
+)
 def test_contextualize_async(writer):
     logger.add(writer, format="{message} {extra[i]}", catch=False)
 
@@ -103,7 +105,8 @@ def test_contextualize_thread(writer):
     exit_barrier = threading.Barrier(5)
 
     threads = [
-        threading.Thread(target=worker, args=(entry_barrier, exit_barrier, i)) for i in range(5)
+        threading.Thread(target=worker, args=(entry_barrier, exit_barrier, i))
+        for i in range(5)
     ]
 
     for thread in threads:

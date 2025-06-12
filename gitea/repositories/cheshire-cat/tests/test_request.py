@@ -73,9 +73,7 @@ def test_request_id(request_id, expected_type):
     async def get(request):
         return response.empty()
 
-    request, _ = app.test_client.get(
-        "/", headers={"X-REQUEST-ID": f"{request_id}"}
-    )
+    request, _ = app.test_client.get("/", headers={"X-REQUEST-ID": f"{request_id}"})
     assert request.id == request_id
     assert type(request.id) == expected_type
 
@@ -151,9 +149,7 @@ def test_request_accept():
 
     request, _ = app.test_client.get(
         "/",
-        headers={
-            "Accept": "text/*, text/plain, text/plain;format=flowed, */*"
-        },
+        headers={"Accept": "text/*, text/plain, text/plain;format=flowed, */*"},
     )
     assert request.accept == [
         "text/plain;format=flowed",
@@ -165,9 +161,7 @@ def test_request_accept():
     request, _ = app.test_client.get(
         "/",
         headers={
-            "Accept": (
-                "text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c"
-            )
+            "Accept": ("text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c")
         },
     )
     assert request.accept == [

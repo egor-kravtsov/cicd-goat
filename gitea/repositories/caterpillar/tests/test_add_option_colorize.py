@@ -101,7 +101,9 @@ def test_colorize_stream(patch_colorama, monkeypatch, colorize, tty, replace_ori
 @pytest.mark.parametrize("colorize", [True, False, None])
 @pytest.mark.parametrize("tty", [True, False])
 @pytest.mark.parametrize("replace_original", [True, False])
-def test_colorize_stream_windows(patch_colorama, monkeypatch, colorize, tty, replace_original):
+def test_colorize_stream_windows(
+    patch_colorama, monkeypatch, colorize, tty, replace_original
+):
     stream = Stream(tty)
 
     monkeypatch.delenv("TERM", raising=False)

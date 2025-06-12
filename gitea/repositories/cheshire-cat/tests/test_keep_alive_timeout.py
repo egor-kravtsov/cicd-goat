@@ -92,9 +92,7 @@ def test_keep_alive_client_timeout():
     keep-alive timeout, client will try to create a new connection here."""
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    client = ReusableClient(
-        keep_alive_app_client_timeout, loop=loop, port=PORT
-    )
+    client = ReusableClient(keep_alive_app_client_timeout, loop=loop, port=PORT)
     with client:
         headers = {"Connection": "keep-alive"}
         request, response = client.get("/1", headers=headers, timeout=1)
@@ -119,9 +117,7 @@ def test_keep_alive_server_timeout():
     broken server connection."""
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    client = ReusableClient(
-        keep_alive_app_server_timeout, loop=loop, port=PORT
-    )
+    client = ReusableClient(keep_alive_app_server_timeout, loop=loop, port=PORT)
     with client:
         headers = {"Connection": "keep-alive"}
         request, response = client.get("/1", headers=headers, timeout=60)
@@ -153,7 +149,5 @@ def test_keep_alive_connection_context():
 
         assert response.text == "hello"
         assert id(request1.conn_info.ctx) == id(request2.conn_info.ctx)
-        assert (
-            request1.conn_info.ctx.foo == request2.conn_info.ctx.foo == "hello"
-        )
+        assert request1.conn_info.ctx.foo == request2.conn_info.ctx.foo == "hello"
         assert request2.protocol.state["requests_count"] == 2

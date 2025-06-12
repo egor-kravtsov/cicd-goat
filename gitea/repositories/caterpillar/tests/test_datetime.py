@@ -57,7 +57,11 @@ else:
             (2018, 6, 9, 1, 2, 3, 45, "UTC", -18000),
             "2018-06-09 06-02-03 000045 %s +0000" % UTC_NAME,
         ),
-        ("YY-M-D H-m-s SSS Z", (2005, 4, 7, 9, 3, 8, 2320, "A", 3600), "05-4-7 9-3-8 002 +01:00"),
+        (
+            "YY-M-D H-m-s SSS Z",
+            (2005, 4, 7, 9, 3, 8, 2320, "A", 3600),
+            "05-4-7 9-3-8 002 +01:00",
+        ),
         (
             "Q_DDDD_DDD d_E h_hh A SS ZZ",
             (2000, 1, 1, 14, 0, 0, 900000, "B", -1800),
@@ -87,7 +91,11 @@ else:
         ),
         ("HH:mm:ss[!UTC]", (2018, 1, 1, 11, 30, 0, 0, "A", 7200), "11:30:00!UTC"),
         ("", (2018, 2, 3, 11, 9, 0, 2, "Z", 1800), "2018-02-03T11:09:00.000002+0030"),
-        ("!UTC", (2018, 2, 3, 11, 9, 0, 2, "Z", 1800), "2018-02-03T10:39:00.000002+0000"),
+        (
+            "!UTC",
+            (2018, 2, 3, 11, 9, 0, 2, "Z", 1800),
+            "2018-02-03T10:39:00.000002+0000",
+        ),
     ],
 )
 def test_formatting(writer, monkeypatch_date, time_format, date, expected):
@@ -145,4 +153,6 @@ def test_missing_struct_time_fields(writer, monkeypatch, monkeypatch_date):
     logger.debug("X")
 
     result = writer.read()
-    assert re.fullmatch(r"\d{4} \d{2} \d{2} \d{2} \d{2} \d{2} \d{6} [+-]\d{4} .*\n", result)
+    assert re.fullmatch(
+        r"\d{4} \d{2} \d{2} \d{2} \d{2} \d{2} \d{6} [+-]\d{4} .*\n", result
+    )

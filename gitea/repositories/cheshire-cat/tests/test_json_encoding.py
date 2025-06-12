@@ -63,15 +63,11 @@ def test_json_response_ujson(payload):
     response = json(payload)
     assert response.body == b'{"foo":{"bar":"bar"}}'
 
-    with pytest.raises(
-        TypeError, match="Object of type Foo is not JSON serializable"
-    ):
+    with pytest.raises(TypeError, match="Object of type Foo is not JSON serializable"):
         json(payload, dumps=sdumps)
 
     Sanic("...", dumps=sdumps)
-    with pytest.raises(
-        TypeError, match="Object of type Foo is not JSON serializable"
-    ):
+    with pytest.raises(TypeError, match="Object of type Foo is not JSON serializable"):
         json(payload)
 
 

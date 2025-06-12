@@ -38,9 +38,7 @@ def _get_args_for_reloading():
     main_module = sys.modules["__main__"]
     mod_spec = getattr(main_module, "__spec__", None)
     if sys.argv[0] in ("", "-c"):
-        raise RuntimeError(
-            f"Autoreloader cannot work with argv[0]={sys.argv[0]!r}"
-        )
+        raise RuntimeError(f"Autoreloader cannot work with argv[0]={sys.argv[0]!r}")
     if mod_spec:
         # Parent exe was launched as a module rather than a script
         return [sys.executable, "-m", mod_spec.name] + sys.argv[1:]

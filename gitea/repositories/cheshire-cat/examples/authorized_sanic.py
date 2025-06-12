@@ -27,14 +27,16 @@ def authorized(f):
             return response
         else:
             # the user is not authorized.
-            return json({'status': 'not_authorized'}, 403)
+            return json({"status": "not_authorized"}, 403)
+
     return decorated_function
 
 
 @app.route("/")
 @authorized
 async def test(request):
-    return json({'status': 'authorized'})
+    return json({"status": "authorized"})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)

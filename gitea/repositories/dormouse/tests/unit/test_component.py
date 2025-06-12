@@ -93,8 +93,6 @@ class CustomEventComponent(Component):
     def baz(self):
         return "baz"
 
+
 def test_listeners():
-    assert CustomEventComponent._listeners() == {
-        "foo": ["foo", "bar"],
-        "bar": ["bar"]
-    }
+    assert CustomEventComponent._listeners() == {"foo": ["foo", "bar"], "bar": ["bar"]}

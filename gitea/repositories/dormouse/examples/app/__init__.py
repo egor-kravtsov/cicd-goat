@@ -1,7 +1,7 @@
-
 from flask import Flask, render_template
 from config import config
 from flask_meld import Meld
+
 # from .db import db
 # from app import models
 
@@ -21,4 +21,3 @@ def create_app(config_name="development"):
         return render_template("index.html")
 
     return app
-    

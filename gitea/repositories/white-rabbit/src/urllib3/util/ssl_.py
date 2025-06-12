@@ -429,8 +429,7 @@ def ssl_wrap_socket(
     key_password: Optional[str] = ...,
     ca_cert_data: Union[None, str, bytes] = ...,
     tls_in_tls: "Literal[False]" = ...,
-) -> "ssl.SSLSocket":
-    ...
+) -> "ssl.SSLSocket": ...
 
 
 @overload
@@ -448,8 +447,7 @@ def ssl_wrap_socket(
     key_password: Optional[str] = ...,
     ca_cert_data: Union[None, str, bytes] = ...,
     tls_in_tls: bool = ...,
-) -> Union["ssl.SSLSocket", "SSLTransportType"]:
-    ...
+) -> Union["ssl.SSLSocket", "SSLTransportType"]: ...
 
 
 def ssl_wrap_socket(

@@ -11,6 +11,7 @@ app = Sanic(__name__)
 async def test(request):
     return response.json({"answer": "42"})
 
+
 asyncio.set_event_loop(uvloop.new_event_loop())
 server = app.create_server(host="0.0.0.0", port=8000, return_asyncio_server=True)
 loop = asyncio.get_event_loop()

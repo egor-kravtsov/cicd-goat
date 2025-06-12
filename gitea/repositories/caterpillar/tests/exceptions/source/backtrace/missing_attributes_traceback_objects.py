@@ -21,8 +21,12 @@ def foo():
 # See Twisted: https://git.io/fjJ48
 # See Billiard: https://git.io/fjJ44
 fake_code = namedtuple("fake_code", ("co_filename", "co_name"))
-fake_frame = namedtuple("fake_frame", ("f_back", "f_code", "f_globals", "f_lineno", "f_locals"))
-fake_traceback = namedtuple("fake_traceback", ("tb_frame", "tb_lasti", "tb_lineno", "tb_next"))
+fake_frame = namedtuple(
+    "fake_frame", ("f_back", "f_code", "f_globals", "f_lineno", "f_locals")
+)
+fake_traceback = namedtuple(
+    "fake_traceback", ("tb_frame", "tb_lasti", "tb_lineno", "tb_next")
+)
 
 
 def make_fake(tb):

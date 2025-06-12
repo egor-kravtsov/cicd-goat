@@ -38,9 +38,7 @@ URL_FOR_VALUE4 = f"http://{test_host}:{test_port}/myurl?arg1=v1#anchor"
 def _generate_handlers_from_names(app, l):
     for name in l:
         # this is the easiest way to generate functions with dynamic names
-        exec(
-            f'@app.route(name)\ndef {name}(request):\n\treturn text("{name}")'
-        )
+        exec(f'@app.route(name)\ndef {name}(request):\n\treturn text("{name}")')
 
 
 @pytest.fixture
@@ -359,8 +357,7 @@ def test_methodview_naming(methodview_app):
 )
 def test_versioning(app, path, version, expected):
     @app.route(path, version=version)
-    def handler(*_):
-        ...
+    def handler(*_): ...
 
     url = app.url_for("handler")
     assert url == expected

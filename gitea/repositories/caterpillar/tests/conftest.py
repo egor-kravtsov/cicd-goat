@@ -123,8 +123,12 @@ def monkeypatch_date(monkeypatch):
 
     fix_struct = os.name == "nt" and sys.version_info < (3, 6)
 
-    def monkeypatch_date(year, month, day, hour, minute, second, microsecond, zone="UTC", offset=0):
-        dt = loguru._datetime.datetime(year, month, day, hour, minute, second, microsecond)
+    def monkeypatch_date(
+        year, month, day, hour, minute, second, microsecond, zone="UTC", offset=0
+    ):
+        dt = loguru._datetime.datetime(
+            year, month, day, hour, minute, second, microsecond
+        )
 
         if fix_struct:
 

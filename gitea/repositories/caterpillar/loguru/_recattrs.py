@@ -61,7 +61,11 @@ class RecordProcess:
 
 class RecordException(namedtuple("RecordException", ("type", "value", "traceback"))):
     def __repr__(self):
-        return "(type=%r, value=%r, traceback=%r)" % (self.type, self.value, self.traceback)
+        return "(type=%r, value=%r, traceback=%r)" % (
+            self.type,
+            self.value,
+            self.traceback,
+        )
 
     def __reduce__(self):
         try:
@@ -69,7 +73,10 @@ class RecordException(namedtuple("RecordException", ("type", "value", "traceback
         except pickle.PickleError:
             return (RecordException, (self.type, None, None))
         else:
-            return (RecordException._from_pickled_value, (self.type, pickled_value, None))
+            return (
+                RecordException._from_pickled_value,
+                (self.type, pickled_value, None),
+            )
 
     @classmethod
     def _from_pickled_value(cls, type_, pickled_value, traceback_):

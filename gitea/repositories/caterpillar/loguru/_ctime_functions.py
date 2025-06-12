@@ -15,7 +15,6 @@ if os.name == "nt":
         except (OSError, ValueError):
             pass
 
-
 elif hasattr(os.stat_result, "st_birthtime"):
 
     def get_ctime(filepath):
@@ -23,7 +22,6 @@ elif hasattr(os.stat_result, "st_birthtime"):
 
     def set_ctime(filepath, timestamp):
         pass
-
 
 elif hasattr(os, "getxattr") and hasattr(os, "setxattr"):
 
@@ -38,7 +36,6 @@ elif hasattr(os, "getxattr") and hasattr(os, "setxattr"):
             os.setxattr(filepath, b"user.loguru_crtime", str(timestamp).encode("ascii"))
         except OSError:
             pass
-
 
 else:
 

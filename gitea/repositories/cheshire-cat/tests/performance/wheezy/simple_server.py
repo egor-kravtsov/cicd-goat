@@ -1,6 +1,5 @@
 # Run with: gunicorn --workers=1 --worker-class=meinheld.gmeinheld.MeinheldWorker simple_server:main
-""" Minimal helloworld application.
-"""
+"""Minimal helloworld application."""
 import ujson
 
 from wheezy.http import HTTPResponse, WSGIApplication

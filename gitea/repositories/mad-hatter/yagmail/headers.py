@@ -6,7 +6,7 @@ from yagmail.error import YagAddressError
 
 
 def resolve_addresses(user, useralias, to, cc, bcc):
-    """ Handle the targets addresses, adding aliases when defined """
+    """Handle the targets addresses, adding aliases when defined"""
     addresses = {"recipients": []}
     if to is not None:
         make_addr_alias_target(to, addresses, "To")
@@ -59,7 +59,9 @@ def add_subject(msg, subject):
 def add_recipients_headers(user, useralias, msg, addresses):
     # Quoting the useralias so it should match display-name from https://tools.ietf.org/html/rfc5322 ,
     # even if it's an email address.
-    msg["From"] = '"{0}" <{1}>'.format(useralias.replace("\\", "\\\\").replace('"', '\\"'), user)
+    msg["From"] = '"{0}" <{1}>'.format(
+        useralias.replace("\\", "\\\\").replace('"', '\\"'), user
+    )
     if "To" in addresses:
         msg["To"] = addresses["To"]
     else:
@@ -71,7 +73,9 @@ def add_recipients_headers(user, useralias, msg, addresses):
 def add_message_id(msg, message_id=None, group_messages=True):
     if message_id is None:
         if group_messages:
-            addr = " ".join(sorted([msg["From"], msg["To"]])) + msg.get("Subject", "None")
+            addr = " ".join(sorted([msg["From"], msg["To"]])) + msg.get(
+                "Subject", "None"
+            )
         else:
             addr = str(time.time() + random.random())
         message_id = "<" + hashlib.md5(addr.encode()).hexdigest() + "@yagmail>"

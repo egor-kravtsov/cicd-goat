@@ -5,7 +5,9 @@ from loguru import logger
 
 def test(*, backtrace, colorize, diagnose):
     logger.remove()
-    logger.add(sys.stderr, format="", colorize=colorize, backtrace=backtrace, diagnose=diagnose)
+    logger.add(
+        sys.stderr, format="", colorize=colorize, backtrace=backtrace, diagnose=diagnose
+    )
 
     def foo():
         1 / 0

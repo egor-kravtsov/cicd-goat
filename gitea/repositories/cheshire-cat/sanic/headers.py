@@ -18,13 +18,11 @@ Options = Dict[str, Union[int, str]]  # key=value fields in various headers
 OptionsIterable = Iterable[Tuple[str, str]]  # May contain duplicate keys
 
 _token, _quoted = r"([\w!#$%&'*+\-.^_`|~]+)", r'"([^"]*)"'
-_param = re.compile(fr";\s*{_token}=(?:{_token}|{_quoted})", re.ASCII)
+_param = re.compile(rf";\s*{_token}=(?:{_token}|{_quoted})", re.ASCII)
 _firefox_quote_escape = re.compile(r'\\"(?!; |\s*$)')
 _ipv6 = "(?:[0-9A-Fa-f]{0,4}:){2,7}[0-9A-Fa-f]{0,4}"
 _ipv6_re = re.compile(_ipv6)
-_host_re = re.compile(
-    r"((?:\[" + _ipv6 + r"\])|[a-zA-Z0-9.\-]{1,253})(?::(\d{1,5}))?"
-)
+_host_re = re.compile(r"((?:\[" + _ipv6 + r"\])|[a-zA-Z0-9.\-]{1,253})(?::(\d{1,5}))?")
 
 # RFC's quoted-pair escapes are mostly ignored by browsers. Chrome, Firefox and
 # curl all have different escaping, that we try to handle as well as possible,
@@ -281,11 +279,7 @@ def parse_xforwarded(headers, config) -> Optional[Options]:
             # Combine, split and filter multiple headers' entries
             forwarded_for = headers.getall(config.FORWARDED_FOR_HEADER)
             proxies = [
-                p
-                for p in (
-                    p.strip() for h in forwarded_for for p in h.split(",")
-                )
-                if p
+                p for p in (p.strip() for h in forwarded_for for p in h.split(",")) if p
             ]
             addr = proxies[-proxies_count]
         except (KeyError, IndexError):
@@ -391,6 +385,4 @@ def parse_accept(accept: str) -> AcceptContainer:
 
         accept_list.append(Accept.parse(mtype))
 
-    return AcceptContainer(
-        sorted(accept_list, key=_sort_accept_value, reverse=True)
-    )
+    return AcceptContainer(sorted(accept_list, key=_sort_accept_value, reverse=True))

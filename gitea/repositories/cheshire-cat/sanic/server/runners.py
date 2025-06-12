@@ -97,9 +97,7 @@ def serve(
         unix=unix,
         **protocol_kwargs,
     )
-    asyncio_server_kwargs = (
-        asyncio_server_kwargs if asyncio_server_kwargs else {}
-    )
+    asyncio_server_kwargs = asyncio_server_kwargs if asyncio_server_kwargs else {}
     # UNIX sockets are always bound by us (to preserve semantics between modes)
     if unix:
         sock = bind_unix_socket(unix, backlog=backlog)

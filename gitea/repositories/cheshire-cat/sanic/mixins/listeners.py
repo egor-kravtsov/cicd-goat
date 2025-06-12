@@ -62,32 +62,20 @@ class ListenerMixin:
         else:
             return partial(register_listener, event=listener_or_event)
 
-    def main_process_start(
-        self, listener: ListenerType[Sanic]
-    ) -> ListenerType[Sanic]:
+    def main_process_start(self, listener: ListenerType[Sanic]) -> ListenerType[Sanic]:
         return self.listener(listener, "main_process_start")
 
-    def main_process_stop(
-        self, listener: ListenerType[Sanic]
-    ) -> ListenerType[Sanic]:
+    def main_process_stop(self, listener: ListenerType[Sanic]) -> ListenerType[Sanic]:
         return self.listener(listener, "main_process_stop")
 
-    def before_server_start(
-        self, listener: ListenerType[Sanic]
-    ) -> ListenerType[Sanic]:
+    def before_server_start(self, listener: ListenerType[Sanic]) -> ListenerType[Sanic]:
         return self.listener(listener, "before_server_start")
 
-    def after_server_start(
-        self, listener: ListenerType[Sanic]
-    ) -> ListenerType[Sanic]:
+    def after_server_start(self, listener: ListenerType[Sanic]) -> ListenerType[Sanic]:
         return self.listener(listener, "after_server_start")
 
-    def before_server_stop(
-        self, listener: ListenerType[Sanic]
-    ) -> ListenerType[Sanic]:
+    def before_server_stop(self, listener: ListenerType[Sanic]) -> ListenerType[Sanic]:
         return self.listener(listener, "before_server_stop")
 
-    def after_server_stop(
-        self, listener: ListenerType[Sanic]
-    ) -> ListenerType[Sanic]:
+    def after_server_stop(self, listener: ListenerType[Sanic]) -> ListenerType[Sanic]:
         return self.listener(listener, "after_server_stop")

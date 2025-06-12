@@ -27,11 +27,8 @@ app = Sanic(__name__, error_handler=raygun_error_reporter)
 
 @app.route("/raise")
 async def test(request):
-    raise SanicException('You Broke It!')
+    raise SanicException("You Broke It!")
 
 
-if __name__ == '__main__':
-    app.run(
-        host="0.0.0.0",
-        port=getenv("PORT", 8080)
-    )
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=getenv("PORT", 8080))

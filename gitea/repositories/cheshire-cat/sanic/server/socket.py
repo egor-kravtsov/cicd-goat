@@ -19,9 +19,7 @@ def bind_socket(host: str, port: int, *, backlog=100) -> socket.socket:
     try:  # IP address: family must be specified for IPv6 at least
         ip = ip_address(host)
         host = str(ip)
-        sock = socket.socket(
-            socket.AF_INET6 if ip.version == 6 else socket.AF_INET
-        )
+        sock = socket.socket(socket.AF_INET6 if ip.version == 6 else socket.AF_INET)
     except ValueError:  # Hostname, may become AF_INET or AF_INET6
         sock = socket.socket()
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

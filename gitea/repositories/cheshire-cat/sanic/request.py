@@ -63,9 +63,7 @@ class RequestParameters(dict):
         """Return the first value, either the default or actual"""
         return super().get(name, [default])[0]
 
-    def getlist(
-        self, name: str, default: Optional[Any] = None
-    ) -> Optional[Any]:
+    def getlist(self, name: str, default: Optional[Any] = None) -> Optional[Any]:
         """
         Return the entire list
         """
@@ -408,9 +406,7 @@ class Request:
                     )
                 )
 
-        return self.parsed_args[
-            (keep_blank_values, strict_parsing, encoding, errors)
-        ]
+        return self.parsed_args[(keep_blank_values, strict_parsing, encoding, errors)]
 
     args = property(get_args)
 
@@ -486,9 +482,7 @@ class Request:
             if cookie is not None:
                 cookies: SimpleCookie = SimpleCookie()
                 cookies.load(cookie)
-                self._cookies = {
-                    name: cookie.value for name, cookie in cookies.items()
-                }
+                self._cookies = {name: cookie.value for name, cookie in cookies.items()}
             else:
                 self._cookies = {}
         return self._cookies
@@ -579,9 +573,7 @@ class Request:
         :rtype: str
         """
         if not hasattr(self, "_remote_addr"):
-            self._remote_addr = str(
-                self.forwarded.get("for", "")
-            )  # or self.ip
+            self._remote_addr = str(self.forwarded.get("for", ""))  # or self.ip
         return self._remote_addr
 
     @property
@@ -629,9 +621,7 @@ class Request:
         server_name = self.app.config.get("SERVER_NAME")
         if server_name:
             return server_name.split("//", 1)[-1].split("/", 1)[0]
-        return str(
-            self.forwarded.get("host") or self.headers.getone("host", "")
-        )
+        return str(self.forwarded.get("host") or self.headers.getone("host", ""))
 
     @property
     def server_name(self) -> str:
@@ -762,9 +752,7 @@ def parse_multipart_form(body, boundary):
             colon_index = form_line.index(":")
             idx = colon_index + 2
             form_header_field = form_line[0:colon_index].lower()
-            form_header_value, form_parameters = parse_content_header(
-                form_line[idx:]
-            )
+            form_header_value, form_parameters = parse_content_header(form_line[idx:])
 
             if form_header_field == "content-disposition":
                 field_name = form_parameters.get("name")
@@ -789,9 +777,7 @@ def parse_multipart_form(body, boundary):
                 else:
                     fields[field_name] = [value]
             else:
-                form_file = File(
-                    type=content_type, name=file_name, body=post_data
-                )
+                form_file = File(type=content_type, name=file_name, body=post_data)
                 if field_name in files:
                     files[field_name].append(form_file)
                 else:

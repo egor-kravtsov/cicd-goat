@@ -100,8 +100,7 @@ class SandboxedBaseEnvironment(SandboxedEnvironment):
 
 
 class ThemeLoader(FileSystemLoader):
-    """Custom FileSystemLoader that is aware of theme structure and config.
-    """
+    """Custom FileSystemLoader that is aware of theme structure and config."""
 
     DEFAULT_THEMES_PATH = os.path.join(os.path.dirname(__file__), "themes")
     _ADMIN_THEME_PREFIX = ADMIN_THEME + "/"

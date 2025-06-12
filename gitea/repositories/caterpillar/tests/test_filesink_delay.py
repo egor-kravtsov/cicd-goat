@@ -58,7 +58,9 @@ def test_retention_early_remove(tmpdir):
 
 
 def test_rotation(tmpdir):
-    i = logger.add(str(tmpdir.join("file.log")), rotation=0, delay=True, format="{message}")
+    i = logger.add(
+        str(tmpdir.join("file.log")), rotation=0, delay=True, format="{message}"
+    )
     logger.debug("a")
     logger.remove(i)
 
@@ -72,7 +74,9 @@ def test_rotation(tmpdir):
 
 
 def test_rotation_early_remove(tmpdir):
-    i = logger.add(str(tmpdir.join("file.log")), rotation=0, delay=True, format="{message}")
+    i = logger.add(
+        str(tmpdir.join("file.log")), rotation=0, delay=True, format="{message}"
+    )
     logger.remove(i)
 
     assert len(tmpdir.listdir()) == 0

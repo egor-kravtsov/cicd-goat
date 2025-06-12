@@ -11,15 +11,11 @@ MiddlewareResponse = Union[
     Optional[HTTPResponse], Coroutine[Any, Any, Optional[HTTPResponse]]
 ]
 RequestMiddlewareType = Callable[[Request], MiddlewareResponse]
-ResponseMiddlewareType = Callable[
-    [Request, BaseHTTPResponse], MiddlewareResponse
-]
+ResponseMiddlewareType = Callable[[Request, BaseHTTPResponse], MiddlewareResponse]
 ErrorMiddlewareType = Callable[
     [Request, BaseException], Optional[Coroutine[Any, Any, None]]
 ]
 MiddlewareType = Union[RequestMiddlewareType, ResponseMiddlewareType]
-ListenerType = Callable[
-    [Sanic, AbstractEventLoop], Optional[Coroutine[Any, Any, None]]
-]
+ListenerType = Callable[[Sanic, AbstractEventLoop], Optional[Coroutine[Any, Any, None]]]
 RouteHandler = Callable[..., Coroutine[Any, Any, Optional[HTTPResponse]]]
 SignalHandler = Callable[..., Coroutine[Any, Any, None]]

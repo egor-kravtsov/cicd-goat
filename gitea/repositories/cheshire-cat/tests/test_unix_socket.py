@@ -203,9 +203,7 @@ async def test_zero_downtime():
             "examples.delayed_response.app",
         ]
         DN = subprocess.DEVNULL
-        return subprocess.Popen(
-            command, stdin=DN, stdout=DN, stderr=subprocess.PIPE
-        )
+        return subprocess.Popen(command, stdin=DN, stdout=DN, stderr=subprocess.PIPE)
 
     try:
         processes = [spawn()]
@@ -231,9 +229,7 @@ async def test_zero_downtime():
             try:
                 worker.wait(1.0)
             except subprocess.TimeoutExpired:
-                raise Exception(
-                    f"Worker would not terminate:\n{worker.stderr}"
-                )
+                raise Exception(f"Worker would not terminate:\n{worker.stderr}")
     finally:
         for worker in processes:
             worker.kill()

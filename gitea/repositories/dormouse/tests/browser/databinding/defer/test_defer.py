@@ -2,34 +2,34 @@ import pytest
 from flask import url_for
 
 
-@pytest.mark.usefixtures('live_server')
+@pytest.mark.usefixtures("live_server")
 def test_input_defer(browser_client, page):
-    page.goto(url_for('index', _external=True))
+    page.goto(url_for("index", _external=True))
     # Click input
     page.click("input")
     # Fill input
     page.fill("input", "flask-defer test")
-    assert page.inner_text('#bound-data-defer') == ''
+    assert page.inner_text("#bound-data-defer") == ""
     page.click("#button")
     page.wait_for_timeout(100)
-    assert page.inner_text('#bound-data-defer') == 'flask-defer test'
+    assert page.inner_text("#bound-data-defer") == "flask-defer test"
 
 
-@pytest.mark.usefixtures('live_server')
+@pytest.mark.usefixtures("live_server")
 def test_checkbox_defer(browser_client, page):
-    page.goto(url_for('index', _external=True))
+    page.goto(url_for("index", _external=True))
     foo_id = "#foo-id"
     foo = page.locator("#foo-id")
 
-    assert page.inner_text("#bound-foo") == 'True'
+    assert page.inner_text("#bound-foo") == "True"
     assert foo.is_checked()
 
     page.uncheck(foo_id)
-    assert page.inner_text("#bound-foo") == 'True'
+    assert page.inner_text("#bound-foo") == "True"
     page.click("#button")
     page.wait_for_timeout(200)
     assert foo.is_checked() is False
-    assert page.inner_text("#bound-foo") == 'False'
+    assert page.inner_text("#bound-foo") == "False"
     page.click("#button")
 
     # test_multiple_checkboxes

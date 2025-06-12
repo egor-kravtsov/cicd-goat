@@ -377,9 +377,7 @@ class Http(metaclass=TouchUpMeta):
             self.response_func = None
             self.stage = Stage.IDLE
 
-    async def http1_response_chunked(
-        self, data: bytes, end_stream: bool
-    ) -> None:
+    async def http1_response_chunked(self, data: bytes, end_stream: bool) -> None:
         """
         Format a part of response body in chunked encoding.
         """
@@ -387,18 +385,14 @@ class Http(metaclass=TouchUpMeta):
         size = len(data)
         if end_stream:
             await self._send(
-                b"%x\r\n%b\r\n0\r\n\r\n" % (size, data)
-                if size
-                else b"0\r\n\r\n"
+                b"%x\r\n%b\r\n0\r\n\r\n" % (size, data) if size else b"0\r\n\r\n"
             )
             self.response_func = None
             self.stage = Stage.IDLE
         elif size:
             await self._send(b"%x\r\n%b\r\n" % (size, data))
 
-    async def http1_response_normal(
-        self, data: bytes, end_stream: bool
-    ) -> None:
+    async def http1_response_normal(self, data: bytes, end_stream: bool) -> None:
         """
         Format / keep track of non-chunked response.
         """

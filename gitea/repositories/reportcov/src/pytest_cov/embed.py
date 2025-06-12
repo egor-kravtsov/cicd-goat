@@ -13,6 +13,7 @@ For python startup when an ancestor process has set the env indicating
 that code coverage is being collected we activate coverage based on
 info passed via env vars.
 """
+
 import atexit
 import os
 import signal
@@ -33,7 +34,9 @@ try:
 except ImportError:
     pass
 else:
-    multiprocessing.util.register_after_fork(multiprocessing_start, multiprocessing_start)
+    multiprocessing.util.register_after_fork(
+        multiprocessing_start, multiprocessing_start
+    )
 
 
 def init():
@@ -41,11 +44,11 @@ def init():
     # the env.
     global _active_cov
 
-    cov_source = os.environ.get('COV_CORE_SOURCE')
-    cov_config = os.environ.get('COV_CORE_CONFIG')
-    cov_datafile = os.environ.get('COV_CORE_DATAFILE')
-    cov_branch = True if os.environ.get('COV_CORE_BRANCH') == 'enabled' else None
-    cov_context = os.environ.get('COV_CORE_CONTEXT')
+    cov_source = os.environ.get("COV_CORE_SOURCE")
+    cov_config = os.environ.get("COV_CORE_CONFIG")
+    cov_datafile = os.environ.get("COV_CORE_DATAFILE")
+    cov_branch = True if os.environ.get("COV_CORE_BRANCH") == "enabled" else None
+    cov_context = os.environ.get("COV_CORE_CONTEXT")
 
     if cov_datafile:
         if _active_cov:
@@ -68,7 +71,7 @@ def init():
             data_suffix=True,
             config_file=cov_config,
             auto_data=True,
-            data_file=cov_datafile
+            data_file=cov_datafile,
         )
         cov.load()
         cov.start()

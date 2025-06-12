@@ -17,20 +17,14 @@ class Lifespan:
     def __init__(self, asgi_app: "ASGIApp") -> None:
         self.asgi_app = asgi_app
 
-        if (
-            "server.init.before"
-            in self.asgi_app.sanic_app.signal_router.name_index
-        ):
+        if "server.init.before" in self.asgi_app.sanic_app.signal_router.name_index:
             warnings.warn(
                 'You have set a listener for "before_server_start" '
                 "in ASGI mode. "
                 "It will be executed as early as possible, but not before "
                 "the ASGI server is started."
             )
-        if (
-            "server.shutdown.after"
-            in self.asgi_app.sanic_app.signal_router.name_index
-        ):
+        if "server.shutdown.after" in self.asgi_app.sanic_app.signal_router.name_index:
             warnings.warn(
                 'You have set a listener for "after_server_stop" '
                 "in ASGI mode. "
@@ -108,11 +102,7 @@ class ASGIApp:
         if scope["type"] == "lifespan":
             await instance.lifespan(scope, receive, send)
         else:
-            path = (
-                scope["path"][1:]
-                if scope["path"].startswith("/")
-                else scope["path"]
-            )
+            path = scope["path"][1:] if scope["path"].startswith("/") else scope["path"]
             url = "/".join([scope.get("root_path", ""), quote(path)])
             url_bytes = url.encode("latin-1")
             url_bytes += b"?" + scope["query_string"]

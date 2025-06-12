@@ -228,9 +228,7 @@ class Unauthorized(SanicException):
             values = ['{!s}="{!s}"'.format(k, v) for k, v in kwargs.items()]
             challenge = ", ".join(values)
 
-            self.headers = {
-                "WWW-Authenticate": f"{scheme} {challenge}".rstrip()
-            }
+            self.headers = {"WWW-Authenticate": f"{scheme} {challenge}".rstrip()}
 
 
 class LoadFileException(SanicException):
